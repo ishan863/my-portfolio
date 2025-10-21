@@ -1,0 +1,332 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GitHub API Test - Debug NaN Issue</title>
+    <style>
+        body {
+            font-family: 'Courier New', monospace;
+            background: #1e293b;
+            color: #e2e8f0;
+            padding: 20px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        .test-section {
+            background: #0f172a;
+            border: 2px solid #3b82f6;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 8px;
+        }
+        .test-title {
+            color: #4ecdc4;
+            font-size: 20px;
+            font-weight: bold;
+            margin-bottom: 15px;
+            text-decoration: underline;
+        }
+        .result {
+            background: #1e293b;
+            padding: 10px;
+            margin: 10px 0;
+            border-left: 4px solid #3b82f6;
+            font-size: 14px;
+        }
+        .success { border-left-color: #22c55e; background: #0f3a1f; }
+        .error { border-left-color: #ef4444; background: #3a0f0f; }
+        .warning { border-left-color: #f59e0b; background: #3a2f0f; }
+        .info { border-left-color: #3b82f6; background: #0f1f3a; }
+        code {
+            background: #0f172a;
+            padding: 2px 6px;
+            border-radius: 3px;
+            color: #4ecdc4;
+        }
+        button {
+            background: #3b82f6;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 14px;
+            margin: 10px 5px 10px 0;
+        }
+        button:hover {
+            background: #2563eb;
+        }
+        pre {
+            background: #0f172a;
+            padding: 15px;
+            border-radius: 5px;
+            overflow-x: auto;
+            border: 1px solid #3b82f6;
+        }
+        .stat-box {
+            display: inline-block;
+            background: #1e40af;
+            padding: 10px 15px;
+            margin: 5px;
+            border-radius: 5px;
+            text-align: center;
+            min-width: 80px;
+        }
+        .stat-value {
+            color: #4ecdc4;
+            font-size: 24px;
+            font-weight: bold;
+        }
+        .stat-label {
+            color: #94a3b8;
+            font-size: 12px;
+            margin-top: 5px;
+        }
+    </style>
+</head>
+<body>
+    <h1>🔍 GitHub API & Stats Update Test</h1>
+    
+    <div class="test-section">
+        <div class="test-title">Test 1: Direct GitHub API Call</div>
+        <button onclick="testGitHubAPI()">Test API</button>
+        <button onclick="clearResults()">Clear Results</button>
+        <div id="api-test-result"></div>
+    </div>
+
+    <div class="test-section">
+        <div class="test-title">Test 2: Check HTML Elements</div>
+        <button onclick="testHTMLElements()">Check Elements</button>
+        <div id="elements-test-result"></div>
+    </div>
+
+    <div class="test-section">
+        <div class="test-title">Test 3: Simulate Stats Update</div>
+        <button onclick="simulateUpdate()">Simulate Update</button>
+        <div id="simulate-result"></div>
+        <p>Stats display in page:</p>
+        <div id="stats-display">
+            <div class="stat-box">
+                <div class="stat-value" data-stat="repos">NaN</div>
+                <div class="stat-label">REPOS</div>
+            </div>
+            <div class="stat-box">
+                <div class="stat-value" data-stat="followers">NaN</div>
+                <div class="stat-label">FOLLOWERS</div>
+            </div>
+            <div class="stat-box">
+                <div class="stat-value" data-stat="following">NaN</div>
+                <div class="stat-label">FOLLOWING</div>
+            </div>
+            <div class="stat-box">
+                <div class="stat-value" data-stat="stars">NaN</div>
+                <div class="stat-label">STARS</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="test-section">
+        <div class="test-title">Test 4: Validation Function Test</div>
+        <button onclick="testValidation()">Test Validation</button>
+        <div id="validation-result"></div>
+    </div>
+
+    <div class="test-section">
+        <div class="test-title">Console Output</div>
+        <div id="console-output"></div>
+    </div>
+
+    <script>
+        // Redirect console.log to page
+        const consoleOutput = document.getElementById('console-output');
+        const originalLog = console.log;
+        console.log = function(...args) {
+            originalLog.apply(console, args);
+            const message = args.map(arg => typeof arg === 'object' ? JSON.stringify(arg) : arg).join(' ');
+            consoleOutput.innerHTML += `<div class="result info">${message}</div>`;
+        };
+
+        function log(msg, type = 'info') {
+            const resultEl = document.getElementById('console-output');
+            resultEl.innerHTML += `<div class="result ${type}">${msg}</div>`;
+            console.log(msg);
+        }
+
+        function clearResults() {
+            document.getElementById('api-test-result').innerHTML = '';
+            document.getElementById('elements-test-result').innerHTML = '';
+            document.getElementById('simulate-result').innerHTML = '';
+            document.getElementById('validation-result').innerHTML = '';
+            document.getElementById('console-output').innerHTML = '';
+        }
+
+        // TEST 1: Direct GitHub API Call
+        async function testGitHubAPI() {
+            const resultEl = document.getElementById('api-test-result');
+            resultEl.innerHTML = '<div class="result info">🔄 Testing GitHub API...</div>';
+            
+            try {
+                log('TEST 1: Fetching GitHub API for user "ishan863"...', 'info');
+                
+                const response = await fetch('https://api.github.com/users/ishan863', {
+                    headers: { 'Accept': 'application/vnd.github.v3+json' }
+                });
+                
+                log(`API Response Status: ${response.status}`, response.ok ? 'success' : 'error');
+                
+                if (response.ok) {
+                    const data = await response.json();
+                    log(`✅ API returned data:`, 'success');
+                    log(`   - public_repos: ${data.public_repos}`, 'success');
+                    log(`   - followers: ${data.followers}`, 'success');
+                    log(`   - following: ${data.following}`, 'success');
+                    
+                    // Test repos API too
+                    log(`Fetching repositories for star count...`, 'info');
+                    const reposResponse = await fetch('https://api.github.com/users/ishan863/repos?per_page=100');
+                    if (reposResponse.ok) {
+                        const repos = await reposResponse.json();
+                        const totalStars = repos.reduce((sum, repo) => sum + (repo.stargazers_count || 0), 0);
+                        log(`✅ Total stars: ${totalStars}`, 'success');
+                    }
+                    
+                    resultEl.innerHTML += `
+                        <div class="result success">
+                            <strong>✅ API Call Successful!</strong><br>
+                            Repos: ${data.public_repos}<br>
+                            Followers: ${data.followers}<br>
+                            Following: ${data.following}
+                        </div>
+                    `;
+                } else {
+                    log(`❌ API returned status ${response.status}`, 'error');
+                    resultEl.innerHTML += `<div class="result error">❌ API Error: ${response.status}</div>`;
+                }
+            } catch (error) {
+                log(`❌ Error: ${error.message}`, 'error');
+                resultEl.innerHTML += `<div class="result error">❌ Error: ${error.message}</div>`;
+            }
+        }
+
+        // TEST 2: Check HTML Elements
+        function testHTMLElements() {
+            const resultEl = document.getElementById('elements-test-result');
+            resultEl.innerHTML = '';
+            
+            log('TEST 2: Checking HTML elements...', 'info');
+            
+            const elements = [
+                { selector: '[data-stat="repos"]', type: 'data-stat repos' },
+                { selector: '[data-stat="followers"]', type: 'data-stat followers' },
+                { selector: '[data-stat="following"]', type: 'data-stat following' },
+                { selector: '[data-stat="stars"]', type: 'data-stat stars' },
+                { selector: '.github-repos', type: 'class github-repos' },
+                { selector: '.github-followers', type: 'class github-followers' },
+                { selector: '.github-following', type: 'class github-following' },
+                { selector: '.github-stars', type: 'class github-stars' }
+            ];
+            
+            let foundCount = 0;
+            elements.forEach(el => {
+                const found = document.querySelectorAll(el.selector);
+                const status = found.length > 0 ? '✅' : '❌';
+                const msg = `${status} ${el.type}: ${found.length} elements found`;
+                log(msg, found.length > 0 ? 'success' : 'warning');
+                resultEl.innerHTML += `<div class="result ${found.length > 0 ? 'success' : 'warning'}">${msg}</div>`;
+                if (found.length > 0) foundCount++;
+            });
+            
+            if (foundCount === 0) {
+                resultEl.innerHTML += `<div class="result error">❌ NO elements found! Stats won't update.</div>`;
+            }
+        }
+
+        // TEST 3: Simulate Update
+        function simulateUpdate() {
+            const resultEl = document.getElementById('simulate-result');
+            resultEl.innerHTML = '<div class="result info">🔄 Simulating stats update...</div>';
+            
+            log('TEST 3: Simulating update with mock data...', 'info');
+            
+            // Mock stats
+            const mockStats = {
+                repos: 25,
+                followers: 15,
+                following: 30,
+                stars: 5
+            };
+            
+            log(`Mock stats: ${JSON.stringify(mockStats)}`, 'info');
+            
+            // Update data-stat elements
+            document.querySelectorAll('[data-stat="repos"]').forEach(el => {
+                el.textContent = String(mockStats.repos);
+                log(`✅ Updated [data-stat="repos"] to: ${mockStats.repos}`, 'success');
+            });
+            document.querySelectorAll('[data-stat="followers"]').forEach(el => {
+                el.textContent = String(mockStats.followers);
+                log(`✅ Updated [data-stat="followers"] to: ${mockStats.followers}`, 'success');
+            });
+            document.querySelectorAll('[data-stat="following"]').forEach(el => {
+                el.textContent = String(mockStats.following);
+                log(`✅ Updated [data-stat="following"] to: ${mockStats.following}`, 'success');
+            });
+            document.querySelectorAll('[data-stat="stars"]').forEach(el => {
+                el.textContent = String(mockStats.stars);
+                log(`✅ Updated [data-stat="stars"] to: ${mockStats.stars}`, 'success');
+            });
+            
+            resultEl.innerHTML += `
+                <div class="result success">
+                    <strong>✅ Update Simulation Complete!</strong><br>
+                    Check the stats display above
+                </div>
+            `;
+        }
+
+        // TEST 4: Validation Function
+        function testValidation() {
+            const resultEl = document.getElementById('validation-result');
+            resultEl.innerHTML = '';
+            
+            log('TEST 4: Testing validation function...', 'info');
+            
+            // Replicate the validation function from portfolio
+            const validateNumber = (value, fallback) => {
+                if (value === null || value === undefined || value === '') return fallback;
+                const stringValue = String(value).trim().toUpperCase();
+                if (stringValue === 'NAN' || stringValue === '') return fallback;
+                const num = Number(value);
+                if (isNaN(num) || !isFinite(num) || num < 0) return fallback;
+                return Math.floor(num);
+            };
+            
+            const testCases = [
+                { input: 25, fallback: 15, expected: 25, label: 'Valid number (25)' },
+                { input: '25', fallback: 15, expected: 25, label: 'String number (25)' },
+                { input: NaN, fallback: 15, expected: 15, label: 'NaN value' },
+                { input: 'NaN', fallback: 15, expected: 15, label: '"NaN" string' },
+                { input: null, fallback: 15, expected: 15, label: 'null value' },
+                { input: undefined, fallback: 15, expected: 15, label: 'undefined value' },
+                { input: -5, fallback: 15, expected: 15, label: 'Negative number' },
+                { input: Infinity, fallback: 15, expected: 15, label: 'Infinity' },
+            ];
+            
+            testCases.forEach(tc => {
+                const result = validateNumber(tc.input, tc.fallback);
+                const pass = result === tc.expected;
+                const status = pass ? '✅' : '❌';
+                const msg = `${status} ${tc.label}: got ${result}, expected ${tc.expected}`;
+                log(msg, pass ? 'success' : 'error');
+                resultEl.innerHTML += `<div class="result ${pass ? 'success' : 'error'}">${msg}</div>`;
+            });
+        }
+
+        // Run all tests on load
+        window.addEventListener('load', () => {
+            log('Page loaded. Ready for testing!', 'success');
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,307 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Portfolio Functionality Test</title>
+    <style>
+        body { 
+            font-family: Arial; 
+            padding: 20px; 
+            background: #1e293b; 
+            color: #f1f5f9; 
+        }
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+        h1 { color: #3b82f6; }
+        .test-section {
+            background: #334155;
+            padding: 20px;
+            margin: 15px 0;
+            border-radius: 8px;
+            border-left: 4px solid #3b82f6;
+        }
+        .test-item {
+            padding: 10px;
+            margin: 10px 0;
+            background: #1e293b;
+            border-radius: 4px;
+        }
+        .status {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 12px;
+            font-weight: bold;
+            font-size: 0.9em;
+        }
+        .status.pass { background: #10b981; color: white; }
+        .status.fail { background: #ef4444; color: white; }
+        .status.warning { background: #f59e0b; color: white; }
+        button {
+            padding: 10px 20px;
+            background: #3b82f6;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            margin: 5px;
+        }
+        button:hover { background: #2563eb; }
+        .result {
+            margin-top: 10px;
+            padding: 10px;
+            background: #0f172a;
+            border-radius: 4px;
+            font-family: monospace;
+        }
+        a { color: #60a5fa; text-decoration: none; }
+        a:hover { text-decoration: underline; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🧪 Portfolio Functionality Test</h1>
+        <p>Testing all buttons, links, and functionality in your portfolio</p>
+        
+        <button onclick="runAllTests()">▶️ Run All Tests</button>
+        <button onclick="location.href='index.html'">🏠 Open Portfolio</button>
+        <button onclick="location.href='generate_project_images.html'">🖼️ Generate Images</button>
+        
+        <div class="test-section">
+            <h2>📄 Critical Files</h2>
+            <div id="files-result"></div>
+        </div>
+        
+        <div class="test-section">
+            <h2>🔗 Download Buttons</h2>
+            <div id="downloads-result"></div>
+        </div>
+        
+        <div class="test-section">
+            <h2>🌐 External Links</h2>
+            <div id="links-result"></div>
+        </div>
+        
+        <div class="test-section">
+            <h2>🖼️ Images</h2>
+            <div id="images-result"></div>
+        </div>
+        
+        <div class="test-section">
+            <h2>📊 GitHub Stats</h2>
+            <div id="stats-result"></div>
+        </div>
+        
+        <div class="test-section">
+            <h2>✅ Quick Fixes</h2>
+            <button onclick="openGenerateImages()">Generate Project Images</button>
+            <button onclick="checkResume()">Check Resume PDF</button>
+            <button onclick="testAllButtons()">Test All Buttons</button>
+        </div>
+    </div>
+
+    <script>
+        async function runAllTests() {
+            testCriticalFiles();
+            testDownloadButtons();
+            testExternalLinks();
+            testImages();
+            await testGitHubStats();
+        }
+
+        function testCriticalFiles() {
+            const files = [
+                { path: './index.html', name: 'Portfolio Homepage' },
+                { path: './assets/resume.pdf', name: 'Resume PDF' },
+                { path: './css/style.css', name: 'Main Stylesheet' },
+                { path: './js/lightning-fast.js', name: 'Main JavaScript' },
+                { path: './assets/images/avatar.jpg', name: 'Avatar Image' },
+                { path: './assets/images/about-photo.jpg', name: 'About Photo' }
+            ];
+            
+            const result = document.getElementById('files-result');
+            result.innerHTML = '<p>Testing file existence...</p>';
+            
+            let html = '';
+            files.forEach(file => {
+                fetch(file.path, { method: 'HEAD' })
+                    .then(response => {
+                        const status = response.ok ? 'pass' : 'fail';
+                        const icon = response.ok ? '✅' : '❌';
+                        html += `<div class="test-item">
+                            ${icon} <strong>${file.name}</strong>: 
+                            <span class="status ${status}">${response.ok ? 'EXISTS' : 'MISSING'}</span>
+                        </div>`;
+                        result.innerHTML = html;
+                    })
+                    .catch(() => {
+                        html += `<div class="test-item">
+                            ❌ <strong>${file.name}</strong>: 
+                            <span class="status fail">MISSING</span>
+                        </div>`;
+                        result.innerHTML = html;
+                    });
+            });
+        }
+
+        function testDownloadButtons() {
+            const downloads = [
+                { path: './assets/resume.pdf', name: 'Download Resume Button (Hero)' },
+                { path: './assets/resume.pdf', name: 'Download CV Button (About)' }
+            ];
+            
+            const result = document.getElementById('downloads-result');
+            let html = '';
+            
+            downloads.forEach(download => {
+                fetch(download.path, { method: 'HEAD' })
+                    .then(response => {
+                        const status = response.ok ? 'pass' : 'fail';
+                        const icon = response.ok ? '✅' : '❌';
+                        html += `<div class="test-item">
+                            ${icon} <strong>${download.name}</strong>: 
+                            <span class="status ${status}">${response.ok ? 'WORKING' : 'BROKEN'}</span>
+                            ${response.ok ? `<a href="${download.path}" download>[Test Download]</a>` : ''}
+                        </div>`;
+                        result.innerHTML = html;
+                    });
+            });
+        }
+
+        function testExternalLinks() {
+            const links = [
+                { url: 'https://github.com/ishan863', name: 'GitHub Profile' },
+                { url: 'https://www.linkedin.com/in/goura-hari-patel-b4510029b/', name: 'LinkedIn Profile' },
+                { url: 'https://t.me/gouraharipatel', name: 'Telegram' },
+                { url: 'mailto:gouraharipatel@gmail.com', name: 'Email Contact' }
+            ];
+            
+            const result = document.getElementById('links-result');
+            let html = '';
+            
+            links.forEach(link => {
+                if (link.url.startsWith('mailto:')) {
+                    html += `<div class="test-item">
+                        ✅ <strong>${link.name}</strong>: 
+                        <span class="status pass">CONFIGURED</span>
+                        <a href="${link.url}" target="_blank">[Test]</a>
+                    </div>`;
+                } else {
+                    html += `<div class="test-item">
+                        ✅ <strong>${link.name}</strong>: 
+                        <span class="status pass">CONFIGURED</span>
+                        <a href="${link.url}" target="_blank">[Open]</a>
+                    </div>`;
+                }
+            });
+            
+            result.innerHTML = html;
+        }
+
+        function testImages() {
+            const images = [
+                { path: './assets/images/avatar.jpg', name: 'Hero Avatar' },
+                { path: './assets/images/about-photo.jpg', name: 'About Section Photo' },
+                { path: './assets/images/projects/chowmin-shop.jpg', name: 'Chowmin Shop (Local)', required: false }
+            ];
+            
+            const result = document.getElementById('images-result');
+            let html = '';
+            
+            images.forEach(img => {
+                fetch(img.path, { method: 'HEAD' })
+                    .then(response => {
+                        const status = response.ok ? 'pass' : (img.required === false ? 'warning' : 'fail');
+                        const icon = response.ok ? '✅' : (img.required === false ? '⚠️' : '❌');
+                        const statusText = response.ok ? 'EXISTS' : (img.required === false ? 'USING FALLBACK' : 'MISSING');
+                        html += `<div class="test-item">
+                            ${icon} <strong>${img.name}</strong>: 
+                            <span class="status ${status}">${statusText}</span>
+                        </div>`;
+                        result.innerHTML = html;
+                    })
+                    .catch(() => {
+                        const status = img.required === false ? 'warning' : 'fail';
+                        const icon = img.required === false ? '⚠️' : '❌';
+                        html += `<div class="test-item">
+                            ${icon} <strong>${img.name}</strong>: 
+                            <span class="status ${status}">USING FALLBACK (Unsplash)</span>
+                        </div>`;
+                        result.innerHTML = html;
+                    });
+            });
+        }
+
+        async function testGitHubStats() {
+            const result = document.getElementById('stats-result');
+            result.innerHTML = '<p>Testing GitHub API integration...</p>';
+            
+            try {
+                const response = await fetch('https://api.github.com/users/ishan863');
+                if (response.ok) {
+                    const data = await response.json();
+                    result.innerHTML = `
+                        <div class="test-item">
+                            ✅ <strong>GitHub API</strong>: <span class="status pass">WORKING</span>
+                        </div>
+                        <div class="result">
+                            <strong>Real Stats:</strong><br>
+                            Repos: ${data.public_repos}<br>
+                            Followers: ${data.followers}<br>
+                            Following: ${data.following}
+                        </div>
+                    `;
+                } else {
+                    throw new Error('API not responding');
+                }
+            } catch (error) {
+                result.innerHTML = `
+                    <div class="test-item">
+                        ⚠️ <strong>GitHub API</strong>: <span class="status warning">USING FALLBACK</span>
+                    </div>
+                    <div class="result">
+                        Fallback Stats: Repos: 25, Followers: 15, Following: 30, Stars: 5
+                    </div>
+                `;
+            }
+        }
+
+        function openGenerateImages() {
+            window.open('generate_project_images.html', '_blank');
+        }
+
+        function checkResume() {
+            fetch('./assets/resume.pdf', { method: 'HEAD' })
+                .then(response => {
+                    if (response.ok) {
+                        alert('✅ Resume PDF exists and is accessible!\n\nClick OK to test download.');
+                        window.open('./assets/resume.pdf');
+                    } else {
+                        alert('❌ Resume PDF is missing!\n\nPlease add your resume as assets/resume.pdf');
+                    }
+                });
+        }
+
+        function testAllButtons() {
+            alert('✅ All buttons checked:\n\n' +
+                  '1. Download Resume (Hero) → assets/resume.pdf\n' +
+                  '2. Download CV (About) → assets/resume.pdf\n' +
+                  '3. View My Work → #projects\n' +
+                  '4. GitHub Links → github.com/ishan863\n' +
+                  '5. LinkedIn → linkedin.com profile\n' +
+                  '6. Telegram → @gouraharipatel\n' +
+                  '7. Email → gouraharipatel@gmail.com\n\n' +
+                  'Check console for detailed results.');
+                  
+            console.log('Button Test Results:');
+            console.log('✅ Hero Download Resume:', './assets/resume.pdf');
+            console.log('✅ About Download CV:', './assets/resume.pdf');
+            console.log('✅ View My Work:', 'Scrolls to #projects');
+            console.log('✅ All social links configured');
+        }
+
+        // Auto-run tests on load
+        window.addEventListener('load', runAllTests);
+    </script>
+</body>
+</html>

@@ -1,0 +1,919 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Smart Portfolio Image Editor</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: #fff;
+            padding: 20px;
+            min-height: 100vh;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        header {
+            text-align: center;
+            margin-bottom: 30px;
+            padding: 30px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 20px;
+            backdrop-filter: blur(10px);
+        }
+        
+        h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+        
+        .subtitle {
+            font-size: 1.1em;
+            opacity: 0.9;
+        }
+        
+        .editor-section {
+            background: rgba(255, 255, 255, 0.95);
+            padding: 30px;
+            border-radius: 20px;
+            margin-bottom: 30px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            color: #333;
+        }
+        
+        .image-type-selector {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-bottom: 30px;
+        }
+        
+        .type-btn {
+            padding: 20px;
+            border: 3px solid #667eea;
+            border-radius: 15px;
+            background: white;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-align: center;
+            font-size: 1.1em;
+            font-weight: 600;
+        }
+        
+        .type-btn:hover {
+            background: #667eea;
+            color: white;
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(102, 126, 234, 0.4);
+        }
+        
+        .type-btn.active {
+            background: #667eea;
+            color: white;
+        }
+        
+        .type-icon {
+            font-size: 2em;
+            margin-bottom: 10px;
+        }
+        
+        .upload-zone {
+            border: 3px dashed #667eea;
+            border-radius: 15px;
+            padding: 60px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s;
+            background: #f8f9ff;
+            margin-bottom: 30px;
+        }
+        
+        .upload-zone:hover {
+            border-color: #764ba2;
+            background: #f0f1ff;
+            transform: scale(1.02);
+        }
+        
+        .upload-zone.dragover {
+            border-color: #10b981;
+            background: #d1fae5;
+        }
+        
+        .upload-icon {
+            font-size: 4em;
+            margin-bottom: 20px;
+        }
+        
+        .editor-container {
+            display: none;
+            margin-top: 30px;
+        }
+        
+        .editor-container.active {
+            display: block;
+        }
+        
+        .canvas-wrapper {
+            position: relative;
+            margin: 30px auto;
+            display: flex;
+            justify-content: center;
+            background: #f8f9ff;
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: inset 0 2px 10px rgba(0,0,0,0.1);
+        }
+        
+        canvas {
+            border: 2px solid #667eea;
+            border-radius: 10px;
+            max-width: 100%;
+            cursor: move;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        }
+        
+        .controls {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+        
+        .control-group {
+            background: #f8f9ff;
+            padding: 20px;
+            border-radius: 15px;
+            border: 2px solid #e5e7eb;
+        }
+        
+        .control-group label {
+            display: block;
+            margin-bottom: 10px;
+            font-weight: 600;
+            color: #667eea;
+        }
+        
+        input[type="range"] {
+            width: 100%;
+            height: 8px;
+            border-radius: 5px;
+            background: #e5e7eb;
+            outline: none;
+            -webkit-appearance: none;
+        }
+        
+        input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: #667eea;
+            cursor: pointer;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+        }
+        
+        input[type="range"]::-moz-range-thumb {
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: #667eea;
+            cursor: pointer;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+        }
+        
+        .value-display {
+            display: inline-block;
+            background: #667eea;
+            color: white;
+            padding: 4px 12px;
+            border-radius: 8px;
+            font-size: 0.9em;
+            margin-left: 10px;
+        }
+        
+        .action-buttons {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            flex-wrap: wrap;
+            margin-top: 30px;
+        }
+        
+        button {
+            padding: 15px 30px;
+            border: none;
+            border-radius: 10px;
+            font-size: 1em;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+        
+        .btn-primary:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 25px rgba(102, 126, 234, 0.6);
+        }
+        
+        .btn-success {
+            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+            color: white;
+            box-shadow: 0 5px 15px rgba(16, 185, 129, 0.4);
+        }
+        
+        .btn-success:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 25px rgba(16, 185, 129, 0.6);
+        }
+        
+        .btn-secondary {
+            background: #6b7280;
+            color: white;
+        }
+        
+        .btn-secondary:hover {
+            background: #4b5563;
+        }
+        
+        .btn-danger {
+            background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+            color: white;
+        }
+        
+        .btn-danger:hover {
+            background: linear-gradient(135deg, #dc2626 0%, #b91c1c 100%);
+        }
+        
+        input[type="file"] {
+            display: none;
+        }
+        
+        .preview-section {
+            display: none;
+            margin-top: 30px;
+            text-align: center;
+        }
+        
+        .preview-section.active {
+            display: block;
+        }
+        
+        .preview-image {
+            max-width: 500px;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            margin: 20px auto;
+            display: block;
+        }
+        
+        .success-message {
+            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+            color: white;
+            padding: 20px 30px;
+            border-radius: 15px;
+            margin: 20px 0;
+            display: none;
+            animation: slideIn 0.5s ease;
+            text-align: center;
+            font-size: 1.2em;
+            box-shadow: 0 10px 30px rgba(16, 185, 129, 0.4);
+        }
+        
+        .success-message.show {
+            display: block;
+        }
+        
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .info-panel {
+            background: #f0f1ff;
+            padding: 20px;
+            border-radius: 15px;
+            margin-top: 20px;
+            border-left: 5px solid #667eea;
+        }
+        
+        .info-panel h3 {
+            color: #667eea;
+            margin-bottom: 10px;
+        }
+        
+        .info-panel ul {
+            margin-left: 20px;
+            color: #666;
+        }
+        
+        .info-panel li {
+            margin: 5px 0;
+        }
+        
+        .quick-actions {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+            margin: 20px 0;
+            flex-wrap: wrap;
+        }
+        
+        .quick-btn {
+            padding: 10px 20px;
+            background: white;
+            color: #667eea;
+            border: 2px solid #667eea;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+        
+        .quick-btn:hover {
+            background: #667eea;
+            color: white;
+        }
+        
+        .aspect-ratio-info {
+            text-align: center;
+            margin: 15px 0;
+            padding: 10px;
+            background: #e0e7ff;
+            border-radius: 8px;
+            color: #667eea;
+            font-weight: 600;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>🎨 Smart Portfolio Image Editor</h1>
+            <p class="subtitle">Drag, Crop, Position & Auto-Save - Like Facebook Profile Picture!</p>
+        </header>
+
+        <div class="editor-section">
+            <h2 style="margin-bottom: 20px;">📸 Select Image Type</h2>
+            
+            <div class="image-type-selector">
+                <div class="type-btn active" onclick="selectType('avatar', '1:1', 400, 400)">
+                    <div class="type-icon">👤</div>
+                    <div>Profile Avatar</div>
+                    <small>Square (1:1)</small>
+                </div>
+                
+                <div class="type-btn" onclick="selectType('about', '3:4', 600, 800)">
+                    <div class="type-icon">📷</div>
+                    <div>About Photo</div>
+                    <small>Portrait (3:4)</small>
+                </div>
+                
+                <div class="type-btn" onclick="selectType('project', '2:1', 1200, 600)">
+                    <div class="type-icon">🚀</div>
+                    <div>Project Image</div>
+                    <small>Landscape (2:1)</small>
+                </div>
+                
+                <div class="type-btn" onclick="selectType('custom', 'custom', 800, 800)">
+                    <div class="type-icon">✨</div>
+                    <div>Custom Size</div>
+                    <small>Any Ratio</small>
+                </div>
+            </div>
+
+            <div class="aspect-ratio-info" id="ratioInfo">
+                📐 Selected: Profile Avatar (Square 1:1) - 400×400px
+            </div>
+
+            <div class="upload-zone" id="uploadZone" onclick="document.getElementById('fileInput').click()">
+                <div class="upload-icon">📤</div>
+                <h3>Drag & Drop Your Image Here</h3>
+                <p>or click to browse</p>
+                <p style="color: #666; margin-top: 10px; font-size: 0.9em;">
+                    Supports: JPG, PNG, WebP (Max 10MB)
+                </p>
+            </div>
+            <input type="file" id="fileInput" accept="image/*" onchange="handleFile(event)">
+
+            <div class="editor-container" id="editorContainer">
+                <h3 style="text-align: center; margin-bottom: 20px; color: #667eea;">
+                    🎨 Edit Your Image - Drag to position, Use sliders to adjust
+                </h3>
+
+                <div class="canvas-wrapper">
+                    <canvas id="canvas"></canvas>
+                </div>
+
+                <div class="quick-actions">
+                    <button class="quick-btn" onclick="resetPosition()">↺ Reset Position</button>
+                    <button class="quick-btn" onclick="fitImage()">⊡ Fit to Canvas</button>
+                    <button class="quick-btn" onclick="fillImage()">⊞ Fill Canvas</button>
+                    <button class="quick-btn" onclick="centerImage()">⊙ Center Image</button>
+                </div>
+
+                <div class="controls">
+                    <div class="control-group">
+                        <label>
+                            🔍 Zoom
+                            <span class="value-display" id="zoomValue">100%</span>
+                        </label>
+                        <input type="range" id="zoomSlider" min="10" max="300" value="100" oninput="updateZoom(this.value)">
+                    </div>
+
+                    <div class="control-group">
+                        <label>
+                            ↔️ Horizontal Position
+                            <span class="value-display" id="xValue">0</span>
+                        </label>
+                        <input type="range" id="xSlider" min="-500" max="500" value="0" oninput="updatePosition()">
+                    </div>
+
+                    <div class="control-group">
+                        <label>
+                            ↕️ Vertical Position
+                            <span class="value-display" id="yValue">0</span>
+                        </label>
+                        <input type="range" id="ySlider" min="-500" max="500" value="0" oninput="updatePosition()">
+                    </div>
+
+                    <div class="control-group">
+                        <label>
+                            🔄 Rotation
+                            <span class="value-display" id="rotateValue">0°</span>
+                        </label>
+                        <input type="range" id="rotateSlider" min="-180" max="180" value="0" oninput="updateRotation(this.value)">
+                    </div>
+
+                    <div class="control-group">
+                        <label>
+                            ☀️ Brightness
+                            <span class="value-display" id="brightnessValue">100%</span>
+                        </label>
+                        <input type="range" id="brightnessSlider" min="50" max="150" value="100" oninput="updateFilters()">
+                    </div>
+
+                    <div class="control-group">
+                        <label>
+                            🎨 Contrast
+                            <span class="value-display" id="contrastValue">100%</span>
+                        </label>
+                        <input type="range" id="contrastSlider" min="50" max="150" value="100" oninput="updateFilters()">
+                    </div>
+                </div>
+
+                <div class="action-buttons">
+                    <button class="btn-success" onclick="saveImage()">
+                        💾 Save & Apply to Portfolio
+                    </button>
+                    <button class="btn-primary" onclick="downloadPreview()">
+                        ⬇️ Download Preview
+                    </button>
+                    <button class="btn-secondary" onclick="resetAll()">
+                        🔄 Start Over
+                    </button>
+                    <button class="btn-danger" onclick="cancelEdit()">
+                        ❌ Cancel
+                    </button>
+                </div>
+
+                <div class="info-panel">
+                    <h3>📝 Tips for Best Results:</h3>
+                    <ul>
+                        <li>🖱️ Click and drag on the canvas to position your image</li>
+                        <li>🔍 Use zoom slider for perfect framing</li>
+                        <li>↔️ Adjust position sliders for fine-tuning</li>
+                        <li>🔄 Rotate if needed for better composition</li>
+                        <li>☀️ Adjust brightness and contrast for clarity</li>
+                        <li>💾 Click "Save & Apply" to automatically update your portfolio</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="success-message" id="successMessage"></div>
+
+            <div class="preview-section" id="previewSection">
+                <h3 style="color: #667eea; margin-bottom: 20px;">✅ Image Saved Successfully!</h3>
+                <img id="previewImage" class="preview-image" alt="Preview">
+                <div class="action-buttons">
+                    <button class="btn-primary" onclick="location.href='index.html'">
+                        🏠 View Portfolio
+                    </button>
+                    <button class="btn-success" onclick="editAnother()">
+                        ➕ Edit Another Image
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let canvas, ctx;
+        let image = null;
+        let imageData = {
+            x: 0,
+            y: 0,
+            scale: 1,
+            rotation: 0,
+            brightness: 100,
+            contrast: 100
+        };
+        let isDragging = false;
+        let dragStart = { x: 0, y: 0 };
+        let currentType = 'avatar';
+        let canvasWidth = 400;
+        let canvasHeight = 400;
+        let aspectRatio = '1:1';
+
+        // Initialize
+        window.onload = function() {
+            canvas = document.getElementById('canvas');
+            ctx = canvas.getContext('2d', { alpha: false });
+            setupCanvas();
+            setupDragAndDrop();
+            setupCanvasDrag();
+        };
+
+        function setupCanvas() {
+            canvas.width = canvasWidth;
+            canvas.height = canvasHeight;
+            ctx.fillStyle = '#f8f9ff';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+        }
+
+        function selectType(type, ratio, width, height) {
+            currentType = type;
+            aspectRatio = ratio;
+            canvasWidth = width;
+            canvasHeight = height;
+            
+            // Update UI
+            document.querySelectorAll('.type-btn').forEach(btn => btn.classList.remove('active'));
+            event.currentTarget.classList.add('active');
+            
+            const names = {
+                'avatar': 'Profile Avatar (Square 1:1)',
+                'about': 'About Photo (Portrait 3:4)',
+                'project': 'Project Image (Landscape 2:1)',
+                'custom': 'Custom Size'
+            };
+            
+            document.getElementById('ratioInfo').textContent = 
+                `📐 Selected: ${names[type]} - ${width}×${height}px`;
+            
+            setupCanvas();
+            if (image) {
+                fitImage();
+            }
+        }
+
+        function setupDragAndDrop() {
+            const zone = document.getElementById('uploadZone');
+            
+            ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
+                zone.addEventListener(eventName, preventDefaults, false);
+            });
+
+            function preventDefaults(e) {
+                e.preventDefault();
+                e.stopPropagation();
+            }
+
+            ['dragenter', 'dragover'].forEach(eventName => {
+                zone.addEventListener(eventName, () => zone.classList.add('dragover'), false);
+            });
+
+            ['dragleave', 'drop'].forEach(eventName => {
+                zone.addEventListener(eventName, () => zone.classList.remove('dragover'), false);
+            });
+
+            zone.addEventListener('drop', handleDrop, false);
+        }
+
+        function handleDrop(e) {
+            const dt = e.dataTransfer;
+            const files = dt.files;
+            if (files.length > 0) {
+                loadImageFile(files[0]);
+            }
+        }
+
+        function handleFile(e) {
+            const files = e.target.files;
+            if (files.length > 0) {
+                loadImageFile(files[0]);
+            }
+        }
+
+        function loadImageFile(file) {
+            if (!file.type.startsWith('image/')) {
+                alert('Please upload an image file (JPG, PNG, WebP)');
+                return;
+            }
+
+            if (file.size > 10 * 1024 * 1024) {
+                alert('File is too large. Maximum size is 10MB.');
+                return;
+            }
+
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                const img = new Image();
+                img.onload = function() {
+                    image = img;
+                    document.getElementById('editorContainer').classList.add('active');
+                    document.getElementById('uploadZone').style.display = 'none';
+                    fitImage();
+                };
+                img.src = e.target.result;
+            };
+            reader.readAsDataURL(file);
+        }
+
+        function setupCanvasDrag() {
+            canvas.addEventListener('mousedown', startDrag);
+            canvas.addEventListener('mousemove', drag);
+            canvas.addEventListener('mouseup', endDrag);
+            canvas.addEventListener('mouseleave', endDrag);
+
+            // Touch support
+            canvas.addEventListener('touchstart', (e) => {
+                e.preventDefault();
+                const touch = e.touches[0];
+                const mouseEvent = new MouseEvent('mousedown', {
+                    clientX: touch.clientX,
+                    clientY: touch.clientY
+                });
+                canvas.dispatchEvent(mouseEvent);
+            });
+
+            canvas.addEventListener('touchmove', (e) => {
+                e.preventDefault();
+                const touch = e.touches[0];
+                const mouseEvent = new MouseEvent('mousemove', {
+                    clientX: touch.clientX,
+                    clientY: touch.clientY
+                });
+                canvas.dispatchEvent(mouseEvent);
+            });
+
+            canvas.addEventListener('touchend', (e) => {
+                e.preventDefault();
+                const mouseEvent = new MouseEvent('mouseup', {});
+                canvas.dispatchEvent(mouseEvent);
+            });
+        }
+
+        function startDrag(e) {
+            isDragging = true;
+            const rect = canvas.getBoundingClientRect();
+            dragStart.x = e.clientX - rect.left - imageData.x;
+            dragStart.y = e.clientY - rect.top - imageData.y;
+            canvas.style.cursor = 'grabbing';
+        }
+
+        function drag(e) {
+            if (!isDragging || !image) return;
+            const rect = canvas.getBoundingClientRect();
+            imageData.x = e.clientX - rect.left - dragStart.x;
+            imageData.y = e.clientY - rect.top - dragStart.y;
+            
+            document.getElementById('xSlider').value = imageData.x;
+            document.getElementById('ySlider').value = imageData.y;
+            document.getElementById('xValue').textContent = Math.round(imageData.x);
+            document.getElementById('yValue').textContent = Math.round(imageData.y);
+            
+            drawImage();
+        }
+
+        function endDrag() {
+            isDragging = false;
+            canvas.style.cursor = 'move';
+        }
+
+        function updateZoom(value) {
+            imageData.scale = value / 100;
+            document.getElementById('zoomValue').textContent = value + '%';
+            drawImage();
+        }
+
+        function updatePosition() {
+            imageData.x = parseInt(document.getElementById('xSlider').value);
+            imageData.y = parseInt(document.getElementById('ySlider').value);
+            document.getElementById('xValue').textContent = imageData.x;
+            document.getElementById('yValue').textContent = imageData.y;
+            drawImage();
+        }
+
+        function updateRotation(value) {
+            imageData.rotation = value;
+            document.getElementById('rotateValue').textContent = value + '°';
+            drawImage();
+        }
+
+        function updateFilters() {
+            imageData.brightness = parseInt(document.getElementById('brightnessSlider').value);
+            imageData.contrast = parseInt(document.getElementById('contrastSlider').value);
+            document.getElementById('brightnessValue').textContent = imageData.brightness + '%';
+            document.getElementById('contrastValue').textContent = imageData.contrast + '%';
+            drawImage();
+        }
+
+        function drawImage() {
+            if (!image) return;
+
+            // Clear canvas
+            ctx.fillStyle = '#ffffff';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+            // Save context
+            ctx.save();
+
+            // Apply filters
+            ctx.filter = `brightness(${imageData.brightness}%) contrast(${imageData.contrast}%)`;
+
+            // Move to center for rotation
+            ctx.translate(canvas.width / 2, canvas.height / 2);
+            ctx.rotate((imageData.rotation * Math.PI) / 180);
+            ctx.translate(-canvas.width / 2, -canvas.height / 2);
+
+            // Calculate scaled dimensions
+            const scaledWidth = image.width * imageData.scale;
+            const scaledHeight = image.height * imageData.scale;
+
+            // Draw image
+            ctx.drawImage(
+                image,
+                imageData.x + (canvas.width - scaledWidth) / 2,
+                imageData.y + (canvas.height - scaledHeight) / 2,
+                scaledWidth,
+                scaledHeight
+            );
+
+            // Restore context
+            ctx.restore();
+        }
+
+        function fitImage() {
+            if (!image) return;
+            const scale = Math.min(canvas.width / image.width, canvas.height / image.height);
+            imageData.scale = scale;
+            imageData.x = 0;
+            imageData.y = 0;
+            imageData.rotation = 0;
+            updateSliders();
+            drawImage();
+        }
+
+        function fillImage() {
+            if (!image) return;
+            const scale = Math.max(canvas.width / image.width, canvas.height / image.height);
+            imageData.scale = scale;
+            imageData.x = 0;
+            imageData.y = 0;
+            imageData.rotation = 0;
+            updateSliders();
+            drawImage();
+        }
+
+        function centerImage() {
+            imageData.x = 0;
+            imageData.y = 0;
+            updateSliders();
+            drawImage();
+        }
+
+        function resetPosition() {
+            imageData.x = 0;
+            imageData.y = 0;
+            imageData.rotation = 0;
+            updateSliders();
+            drawImage();
+        }
+
+        function updateSliders() {
+            document.getElementById('zoomSlider').value = imageData.scale * 100;
+            document.getElementById('xSlider').value = imageData.x;
+            document.getElementById('ySlider').value = imageData.y;
+            document.getElementById('rotateSlider').value = imageData.rotation;
+            document.getElementById('zoomValue').textContent = Math.round(imageData.scale * 100) + '%';
+            document.getElementById('xValue').textContent = Math.round(imageData.x);
+            document.getElementById('yValue').textContent = Math.round(imageData.y);
+            document.getElementById('rotateValue').textContent = imageData.rotation + '°';
+        }
+
+        function saveImage() {
+            if (!image) return;
+
+            // Get the final image data
+            const finalCanvas = document.createElement('canvas');
+            finalCanvas.width = canvasWidth;
+            finalCanvas.height = canvasHeight;
+            const finalCtx = finalCanvas.getContext('2d');
+
+            // Draw white background
+            finalCtx.fillStyle = '#ffffff';
+            finalCtx.fillRect(0, 0, finalCanvas.width, finalCanvas.height);
+
+            // Copy from main canvas
+            finalCtx.drawImage(canvas, 0, 0);
+
+            // Convert to blob and download
+            finalCanvas.toBlob(function(blob) {
+                const url = URL.createObjectURL(blob);
+                const link = document.createElement('a');
+                
+                // Determine filename based on type
+                let filename;
+                switch(currentType) {
+                    case 'avatar':
+                        filename = 'avatar.jpg';
+                        break;
+                    case 'about':
+                        filename = 'about-photo.jpg';
+                        break;
+                    case 'project':
+                        filename = `project-${Date.now()}.jpg`;
+                        break;
+                    default:
+                        filename = `image-${Date.now()}.jpg`;
+                }
+                
+                link.download = filename;
+                link.href = url;
+                link.click();
+
+                // Show success message
+                const msg = document.getElementById('successMessage');
+                msg.innerHTML = `✅ Image saved as <strong>${filename}</strong><br>` +
+                    `📁 Place it in: <code>assets/images/${filename}</code><br>` +
+                    `🎉 Your portfolio will automatically use it!`;
+                msg.classList.add('show');
+
+                setTimeout(() => {
+                    msg.classList.remove('show');
+                    showPreview(url);
+                }, 3000);
+
+            }, 'image/jpeg', 0.95);
+        }
+
+        function downloadPreview() {
+            saveImage();
+        }
+
+        function showPreview(url) {
+            document.getElementById('previewImage').src = url;
+            document.getElementById('previewSection').classList.add('active');
+            document.getElementById('editorContainer').style.display = 'none';
+        }
+
+        function resetAll() {
+            image = null;
+            imageData = { x: 0, y: 0, scale: 1, rotation: 0, brightness: 100, contrast: 100 };
+            document.getElementById('editorContainer').classList.remove('active');
+            document.getElementById('uploadZone').style.display = 'block';
+            document.getElementById('previewSection').classList.remove('active');
+            document.getElementById('fileInput').value = '';
+            setupCanvas();
+            updateSliders();
+        }
+
+        function cancelEdit() {
+            if (confirm('Are you sure you want to cancel? All changes will be lost.')) {
+                resetAll();
+            }
+        }
+
+        function editAnother() {
+            resetAll();
+        }
+    </script>
+</body>
+</html>

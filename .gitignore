@@ -1,0 +1,46 @@
+# Dependencies
+node_modules/
+package-lock.json
+
+# Vercel
+.vercel
+
+# OS Files
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Editor files
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# Temporary files
+*.tmp
+*.temp
+*.log
+
+# Test and debug files
+test-*.html
+debug-*.html
+*-test.html
+*-debug.html
+verify_*.html
+
+# Documentation (keep only main README)
+COMPLETION_REPORT.md
+DEBUG_AND_FIXES.md
+DEPLOYMENT_READY.md
+FINAL_*.md
+FIXES_SUMMARY.md
+IMAGE_SETUP.md
+LATEST_FIXES.md
+PORTFOLIO_STATUS.md
+ROOT_CAUSES_AND_FIXES.md
+SHARE_THIS.md
+
+# Backup files
+*.backup
+*.bak

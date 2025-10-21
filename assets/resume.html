@@ -1,0 +1,477 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Goura Hari Patel - Resume</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Poppins', sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background: #fff;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 40px 20px;
+        }
+        
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+            border-bottom: 3px solid #1e40af;
+            padding-bottom: 20px;
+        }
+        
+        .name {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: #1e40af;
+            margin-bottom: 10px;
+        }
+        
+        .title {
+            font-size: 1.2rem;
+            color: #6b7280;
+            margin-bottom: 15px;
+        }
+        
+        .contact-info {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            flex-wrap: wrap;
+            font-size: 0.9rem;
+            color: #4b5563;
+        }
+        
+        .contact-item {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+        
+        .section {
+            margin-bottom: 30px;
+        }
+        
+        .section-title {
+            font-size: 1.3rem;
+            font-weight: 600;
+            color: #1e40af;
+            margin-bottom: 15px;
+            border-bottom: 2px solid #e5e7eb;
+            padding-bottom: 5px;
+        }
+        
+        .summary {
+            text-align: justify;
+            color: #4b5563;
+            font-size: 0.95rem;
+        }
+        
+        .experience-item,
+        .project-item,
+        .education-item {
+            margin-bottom: 20px;
+        }
+        
+        .item-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 8px;
+        }
+        
+        .item-title {
+            font-weight: 600;
+            color: #1f2937;
+            font-size: 1rem;
+        }
+        
+        .item-company,
+        .item-institution {
+            color: #6b7280;
+            font-weight: 500;
+            font-size: 0.9rem;
+        }
+        
+        .item-date {
+            color: #9ca3af;
+            font-size: 0.85rem;
+            font-weight: 500;
+        }
+        
+        .item-description {
+            color: #4b5563;
+            font-size: 0.9rem;
+            margin-top: 5px;
+        }
+        
+        .skills-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+        }
+        
+        .skill-category {
+            background: #f9fafb;
+            padding: 15px;
+            border-radius: 8px;
+            border-left: 4px solid #1e40af;
+        }
+        
+        .skill-category h4 {
+            font-weight: 600;
+            margin-bottom: 8px;
+            color: #1f2937;
+        }
+        
+        .skill-list {
+            list-style: none;
+            color: #6b7280;
+            font-size: 0.9rem;
+        }
+        
+        .skill-list li {
+            margin-bottom: 3px;
+        }
+        
+        .achievements ul {
+            list-style-type: disc;
+            margin-left: 20px;
+            color: #4b5563;
+        }
+        
+        .achievements li {
+            margin-bottom: 5px;
+            font-size: 0.9rem;
+        }
+        
+        .tech-stack {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-top: 8px;
+        }
+        
+        .tech-tag {
+            background: #1e40af;
+            color: white;
+            padding: 3px 8px;
+            border-radius: 4px;
+            font-size: 0.75rem;
+            font-weight: 500;
+        }
+        
+        @media print {
+            body {
+                padding: 20px;
+                font-size: 12px;
+            }
+            
+            .name {
+                font-size: 2rem;
+            }
+            
+            .section {
+                break-inside: avoid;
+            }
+            
+            .contact-info {
+                font-size: 0.8rem;
+            }
+        }
+        
+        @media (max-width: 600px) {
+            .item-header {
+                flex-direction: column;
+            }
+            
+            .contact-info {
+                flex-direction: column;
+                gap: 10px;
+            }
+            
+            .skills-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1 class="name">Goura Hari Patel</h1>
+        <p class="title">AI & Python Developer | Flutter Enthusiast | Automation Creator</p>
+        <div class="contact-info">
+            <div class="contact-item">
+                <span>📧</span>
+                <span>gouraharipatel@gmail.com</span>
+            </div>
+            <div class="contact-item">
+                <span>💼</span>
+                <span>linkedin.com/in/goura-hari-patel-b4510029b</span>
+            </div>
+            <div class="contact-item">
+                <span>🐙</span>
+                <span>github.com/ishan863</span>
+            </div>
+            <div class="contact-item">
+                <span>📱</span>
+                <span>t.me/gouraharipatel</span>
+            </div>
+        </div>
+    </div>
+
+    <div class="section">
+        <h2 class="section-title">Professional Summary</h2>
+        <p class="summary">
+            Passionate AI and Python developer with extensive experience in creating innovative solutions using artificial intelligence, 
+            automation, and cross-platform development. Proven track record of building multiple applications including restaurant 
+            management systems, employee contact managers, PDF utilities, and intelligent automation bots. Strong expertise in 
+            Flutter development, desktop applications, and API integration. Committed to delivering high-quality software solutions 
+            that solve real-world problems and enhance user experience.
+        </p>
+    </div>
+
+    <div class="section">
+        <h2 class="section-title">Technical Skills</h2>
+        <div class="skills-grid">
+            <div class="skill-category">
+                <h4>Programming Languages</h4>
+                <ul class="skill-list">
+                    <li>Python (Advanced)</li>
+                    <li>Dart/Flutter (Advanced)</li>
+                    <li>JavaScript (Intermediate)</li>
+                    <li>HTML5/CSS3 (Advanced)</li>
+                    <li>SQL (Intermediate)</li>
+                </ul>
+            </div>
+            
+            <div class="skill-category">
+                <h4>AI & Machine Learning</h4>
+                <ul class="skill-list">
+                    <li>OpenAI APIs</li>
+                    <li>Stable Diffusion</li>
+                    <li>Juggernaut XL</li>
+                    <li>Computer Vision</li>
+                    <li>Natural Language Processing</li>
+                </ul>
+            </div>
+            
+            <div class="skill-category">
+                <h4>Frameworks & Tools</h4>
+                <ul class="skill-list">
+                    <li>Flutter/Dart</li>
+                    <li>Tkinter (Python GUI)</li>
+                    <li>PyQt5/PyQt6</li>
+                    <li>Firebase</li>
+                    <li>Git/GitHub</li>
+                </ul>
+            </div>
+            
+            <div class="skill-category">
+                <h4>Development Tools</h4>
+                <ul class="skill-list">
+                    <li>Visual Studio Code</li>
+                    <li>Android Studio</li>
+                    <li>Docker</li>
+                    <li>Postman</li>
+                    <li>SQLite</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <div class="section">
+        <h2 class="section-title">Key Projects</h2>
+        
+        <div class="project-item">
+            <div class="item-header">
+                <div>
+                    <div class="item-title">Chowmin Shop App</div>
+                    <div class="item-company">Full-Stack Flutter Application</div>
+                </div>
+                <div class="item-date">2024</div>
+            </div>
+            <p class="item-description">
+                Developed a comprehensive restaurant management application with real-time order processing, menu management, 
+                and user authentication. Features include order tracking, payment integration, and administrative dashboard.
+            </p>
+            <div class="tech-stack">
+                <span class="tech-tag">Flutter</span>
+                <span class="tech-tag">Firebase</span>
+                <span class="tech-tag">Dart</span>
+                <span class="tech-tag">Real-time Database</span>
+            </div>
+        </div>
+
+        <div class="project-item">
+            <div class="item-header">
+                <div>
+                    <div class="item-title">Employee Contact Manager</div>
+                    <div class="item-company">Desktop Application</div>
+                </div>
+                <div class="item-date">2024</div>
+            </div>
+            <p class="item-description">
+                Built a desktop application for managing employee contact information with full CRUD operations, 
+                advanced search capabilities, data export functionality, and automated backup system.
+            </p>
+            <div class="tech-stack">
+                <span class="tech-tag">Python</span>
+                <span class="tech-tag">Tkinter</span>
+                <span class="tech-tag">SQLite</span>
+                <span class="tech-tag">Data Management</span>
+            </div>
+        </div>
+
+        <div class="project-item">
+            <div class="item-header">
+                <div>
+                    <div class="item-title">AI Personal Photo Generator</div>
+                    <div class="item-company">AI-Powered Application</div>
+                </div>
+                <div class="item-date">2024</div>
+            </div>
+            <p class="item-description">
+                Created an AI-powered image generation tool using Juggernaut XL model for creating personalized photos 
+                and artwork. Implemented custom prompt engineering and style transfer capabilities.
+            </p>
+            <div class="tech-stack">
+                <span class="tech-tag">Python</span>
+                <span class="tech-tag">Juggernaut XL</span>
+                <span class="tech-tag">Stable Diffusion</span>
+                <span class="tech-tag">AI/ML</span>
+            </div>
+        </div>
+
+        <div class="project-item">
+            <div class="item-header">
+                <div>
+                    <div class="item-title">Intelligent Telegram Bot</div>
+                    <div class="item-company">Automation & Bot Development</div>
+                </div>
+                <div class="item-date">2024</div>
+            </div>
+            <p class="item-description">
+                Developed an intelligent automation bot for Telegram with features including automated responses, 
+                task management, user analytics, and comprehensive command system for enhanced user interaction.
+            </p>
+            <div class="tech-stack">
+                <span class="tech-tag">Python</span>
+                <span class="tech-tag">Telethon API</span>
+                <span class="tech-tag">API Integration</span>
+                <span class="tech-tag">Automation</span>
+            </div>
+        </div>
+
+        <div class="project-item">
+            <div class="item-header">
+                <div>
+                    <div class="item-title">PDF Management Suite</div>
+                    <div class="item-company">Desktop Utility Application</div>
+                </div>
+                <div class="item-date">2023</div>
+            </div>
+            <p class="item-description">
+                Designed a powerful desktop utility for PDF document management including merging, splitting, 
+                and batch processing with an intuitive drag-and-drop interface.
+            </p>
+            <div class="tech-stack">
+                <span class="tech-tag">Python</span>
+                <span class="tech-tag">PyQt5</span>
+                <span class="tech-tag">PyPDF2</span>
+                <span class="tech-tag">GUI Development</span>
+            </div>
+        </div>
+    </div>
+
+    <div class="section">
+        <h2 class="section-title">Professional Experience</h2>
+        
+        <div class="experience-item">
+            <div class="item-header">
+                <div>
+                    <div class="item-title">Freelance Developer</div>
+                    <div class="item-company">Self-Employed</div>
+                </div>
+                <div class="item-date">2022 - Present</div>
+            </div>
+            <p class="item-description">
+                Developing custom software solutions for clients including mobile applications, desktop utilities, 
+                and automation bots. Specialized in AI integration, cross-platform development, and process automation. 
+                Successfully delivered 15+ projects with high client satisfaction rates.
+            </p>
+        </div>
+
+        <div class="experience-item">
+            <div class="item-header">
+                <div>
+                    <div class="item-title">Python Developer</div>
+                    <div class="item-company">Various Projects</div>
+                </div>
+                <div class="item-date">2021 - 2022</div>
+            </div>
+            <p class="item-description">
+                Focused on Python application development, automation scripting, and data management solutions. 
+                Gained expertise in GUI development, database integration, and API consumption.
+            </p>
+        </div>
+    </div>
+
+    <div class="section">
+        <h2 class="section-title">Education</h2>
+        
+        <div class="education-item">
+            <div class="item-header">
+                <div>
+                    <div class="item-title">Computer Science & Engineering</div>
+                    <div class="item-institution">Technical University</div>
+                </div>
+                <div class="item-date">2019 - 2023</div>
+            </div>
+            <p class="item-description">
+                Focused on software development, artificial intelligence, and computer systems. 
+                Relevant coursework: Data Structures, Algorithms, Machine Learning, Database Systems, Web Development.
+            </p>
+        </div>
+    </div>
+
+    <div class="section">
+        <h2 class="section-title">Key Achievements</h2>
+        <div class="achievements">
+            <ul>
+                <li>Successfully developed and deployed 15+ production-ready applications</li>
+                <li>Specialized in AI integration with 85% project success rate</li>
+                <li>Built comprehensive automation solutions reducing manual work by 70%</li>
+                <li>Experienced in cross-platform development for both mobile and desktop</li>
+                <li>Strong problem-solving skills with focus on user-centric design</li>
+                <li>Excellent collaboration and communication skills in team environments</li>
+                <li>Continuous learner with expertise in emerging technologies</li>
+            </ul>
+        </div>
+    </div>
+
+    <div class="section">
+        <h2 class="section-title">Languages</h2>
+        <div class="skills-grid">
+            <div class="skill-category">
+                <h4>Spoken Languages</h4>
+                <ul class="skill-list">
+                    <li>English (Fluent)</li>
+                    <li>Hindi (Native)</li>
+                    <li>Gujarati (Native)</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

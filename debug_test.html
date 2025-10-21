@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Portfolio Debug Test</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+        .test-section {
+            background: white;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        .test-title {
+            font-size: 24px;
+            font-weight: bold;
+            margin-bottom: 15px;
+            color: #333;
+        }
+        .test-result {
+            padding: 10px;
+            margin: 10px 0;
+            border-left: 4px solid #3b82f6;
+            background: #f0f9ff;
+        }
+        .success {
+            border-left-color: #22c55e;
+            background: #f0fdf4;
+        }
+        .error {
+            border-left-color: #ef4444;
+            background: #fef2f2;
+        }
+        .warning {
+            border-left-color: #f59e0b;
+            background: #fffbeb;
+        }
+        code {
+            background: #f3f4f6;
+            padding: 2px 6px;
+            border-radius: 3px;
+            font-family: 'Courier New', monospace;
+        }
+        pre {
+            background: #1e293b;
+            color: #e2e8f0;
+            padding: 15px;
+            border-radius: 8px;
+            overflow-x: auto;
+        }
+        .test-image {
+            width: 200px;
+            height: 200px;
+            background: linear-gradient(135deg, #3b82f6 0%, #4ecdc4 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            border-radius: 8px;
+            margin: 10px 0;
+            animation: rotateInImage 1.2s ease-out;
+        }
+        @keyframes rotateInImage {
+            from {
+                opacity: 0;
+                transform: rotate(-15deg) scale(0.8);
+            }
+            to {
+                opacity: 1;
+                transform: rotate(0deg) scale(1);
+            }
+        }
+    </style>
+</head>
+<body>
+    <h1>🔍 Portfolio Debug Test Suite</h1>
+    
+    <div class="test-section">
+        <div class="test-title">Test 1: Image Rotation Animation</div>
+        <p>Expected: Image rotates in from -15° with scale 0.8 to 1.0</p>
+        <div class="test-image">Image Rotating</div>
+        <div id="rotation-result" class="test-result"></div>
+    </div>
+    
+    <div class="test-section">
+        <div class="test-title">Test 2: HTML Elements Check</div>
+        <div id="elements-result" class="test-result"></div>
+    </div>
+    
+    <div class="test-section">
+        <div class="test-title">Test 3: GitHub Stats Selectors</div>
+        <div id="selectors-result" class="test-result"></div>
+    </div>
+    
+    <div class="test-section">
+        <div class="test-title">Test 4: Validation Function</div>
+        <div id="validation-result" class="test-result"></div>
+    </div>
+    
+    <div class="test-section">
+        <div class="test-title">Test 5: HTML Structure in Portfolio</div>
+        <div id="html-structure-result" class="test-result"></div>
+    </div>
+
+    <script>
+        // Test 1: Check rotation animation
+        document.getElementById('rotation-result').innerHTML = `
+            <strong>✅ Animation Status:</strong><br>
+            Animation: <code>rotateInImage</code><br>
+            Duration: 1.2 seconds<br>
+            From: rotate(-15deg) scale(0.8)<br>
+            To: rotate(0deg) scale(1)<br>
+            Check: Watch the gradient box above rotate and scale in smoothly
+        `;
+
+        // Test 2: Check what elements exist in the actual portfolio
+        async function checkPortfolioElements() {
+            try {
+                const response = await fetch('./index.html');
+                const html = await response.text();
+                
+                let issues = [];
+                let findings = [];
+                
+                // Check for rotation animation in CSS
+                const hasRotateAnimation = html.includes('rotateInImage');
+                findings.push(`CSS Rotation Animation: ${hasRotateAnimation ? '✅ Found' : '❌ Missing'}`);
+                
+                // Check for data-stat attributes
+                const dataStatCount = (html.match(/data-stat="/g) || []).length;
+                findings.push(`data-stat attributes: ${dataStatCount} found`);
+                
+                // Check for class-based selectors
+                const githubReposClass = html.includes('github-repos-realtime') || html.includes('github-repos');
+                findings.push(`GitHub class selectors: ${githubReposClass ? '✅ Found' : '❌ Missing'}`);
+                
+                // Check for .about-img
+                const aboutImg = html.includes('class="about-img"');
+                findings.push(`About image element: ${aboutImg ? '✅ Found' : '❌ Missing'}`);
+                
+                // Check for animation on about-img
+                const aboutImgAnimation = html.includes('animation: rotateInImage') || html.includes('rotateInImage');
+                findings.push(`About image animation: ${aboutImgAnimation ? '✅ Found' : '❌ Missing'}`);
+                
+                document.getElementById('html-structure-result').innerHTML = `
+                    <strong>Portfolio HTML Structure Check:</strong><br>
+                    ${findings.map(f => `<div class="test-result">${f}</div>`).join('')}
+                `;
+            } catch (e) {
+                document.getElementById('html-structure-result').innerHTML = `<div class="error">Error checking HTML: ${e.message}</div>`;
+            }
+        }
+        
+        // Test 3: Check for selector issues
+        function checkSelectors() {
+            const testHTML = `
+                <div data-stat="repos">25</div>
+                <div class="github-repos">25</div>
+                <div class="github-repos-realtime">25</div>
+            `;
+            
+            const container = document.createElement('div');
+            container.innerHTML = testHTML;
+            document.body.appendChild(container);
+            
+            const results = [];
+            
+            // Test different selectors
+            const selector1 = container.querySelector('[data-stat="repos"]');
+            results.push(`<code>[data-stat="repos"]</code>: ${selector1 ? '✅ Works' : '❌ Not found'}`);
+            
+            const selector2 = container.querySelector('.github-repos');
+            results.push(`<code>.github-repos</code>: ${selector2 ? '✅ Works' : '❌ Not found'}`);
+            
+            const selector3 = container.querySelector('.github-repos-realtime');
+            results.push(`<code>.github-repos-realtime</code>: ${selector3 ? '✅ Works' : '❌ Not found'}`);
+            
+            document.getElementById('selectors-result').innerHTML = `
+                <strong>CSS Selector Test:</strong><br>
+                ${results.map(r => `<div class="test-result">${r}</div>`).join('')}
+            `;
+            
+            container.remove();
+        }
+        
+        // Test 4: Validate the validation function
+        function testValidation() {
+            const validateNumber = (value, fallback) => {
+                if (value === null || value === undefined || value === '') return fallback;
+                const stringValue = String(value).trim().toUpperCase();
+                if (stringValue === 'NAN' || stringValue === '') return fallback;
+                const num = Number(value);
+                if (isNaN(num) || !isFinite(num) || num < 0) return fallback;
+                return Math.floor(num);
+            };
+            
+            const testCases = [
+                { input: 25, fallback: 15, expected: 25, label: 'Valid number (25)' },
+                { input: NaN, fallback: 15, expected: 15, label: 'NaN value' },
+                { input: 'NaN', fallback: 15, expected: 15, label: 'NaN string' },
+                { input: null, fallback: 15, expected: 15, label: 'null value' },
+                { input: undefined, fallback: 15, expected: 15, label: 'undefined value' },
+                { input: -5, fallback: 15, expected: 15, label: 'Negative number' },
+                { input: Infinity, fallback: 15, expected: 15, label: 'Infinity' },
+                { input: '30', fallback: 15, expected: 30, label: 'String number (30)' },
+            ];
+            
+            const results = testCases.map(tc => {
+                const result = validateNumber(tc.input, tc.fallback);
+                const pass = result === tc.expected;
+                return `<div class="test-result ${pass ? 'success' : 'error'}">
+                    ${pass ? '✅' : '❌'} ${tc.label}: got ${result}, expected ${tc.expected}
+                </div>`;
+            });
+            
+            document.getElementById('validation-result').innerHTML = `
+                <strong>Validation Function Tests:</strong><br>
+                ${results.join('')}
+            `;
+        }
+        
+        // Test 5: Check elements in current page
+        function checkPageElements() {
+            const results = [];
+            
+            // Check for data-stat elements
+            const dataStatRepos = document.querySelector('[data-stat="repos"]');
+            results.push(`<code>[data-stat="repos"]</code> in page: ${dataStatRepos ? '✅ Found' : '❌ Not found'}`);
+            
+            // Check for class-based elements
+            const classRepos = document.querySelector('.github-repos');
+            results.push(`<code>.github-repos</code> in page: ${classRepos ? '✅ Found' : '❌ Not found'}`);
+            
+            // Check for rotation animation on page
+            const computedStyle = window.getComputedStyle(document.querySelector('.test-image'));
+            const hasAnimation = computedStyle.animation.includes('rotateInImage');
+            results.push(`Rotation animation active: ${hasAnimation ? '✅ Yes' : '❌ No'}`);
+            
+            document.getElementById('elements-result').innerHTML = `
+                <strong>Current Page Elements:</strong><br>
+                ${results.map(r => `<div class="test-result">${r}</div>`).join('')}
+            `;
+        }
+        
+        // Run all tests
+        window.addEventListener('load', () => {
+            testValidation();
+            checkSelectors();
+            checkPageElements();
+            checkPortfolioElements();
+        });
+    </script>
+</body>
+</html>

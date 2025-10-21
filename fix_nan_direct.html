@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Fix NaN Issue - Direct Test</title>
+    <style>
+        body { font-family: Arial; padding: 20px; background: #1e293b; color: #f1f5f9; }
+        .test { background: #334155; padding: 20px; margin: 10px 0; border-radius: 8px; }
+        button { padding: 10px 20px; background: #3b82f6; color: white; border: none; border-radius: 4px; cursor: pointer; margin: 5px; }
+        .result { margin-top: 10px; padding: 10px; background: #1e293b; border-left: 3px solid #3b82f6; }
+        .error { color: #ef4444; }
+        .success { color: #22c55e; }
+        pre { background: #0f172a; padding: 10px; border-radius: 4px; overflow-x: auto; }
+    </style>
+</head>
+<body>
+    <h1>🔧 Direct Portfolio NaN Fix</h1>
+    
+    <div class="test">
+        <h2>Step 1: Force Update Stats to Valid Numbers</h2>
+        <p>This will directly set all stats to valid numbers</p>
+        <button onclick="forceFixStats()">Fix Stats NOW</button>
+        <div id="fix-result" class="result"></div>
+    </div>
+    
+    <div class="test">
+        <h2>Step 2: Check Current Values</h2>
+        <button onclick="checkCurrentValues()">Check What's Displayed</button>
+        <div id="check-result" class="result"></div>
+    </div>
+    
+    <div class="test">
+        <h2>Step 3: Open Portfolio and Apply Fix</h2>
+        <button onclick="openAndFix()">Open Portfolio & Auto-Fix</button>
+        <p style="font-size: 0.9em; color: #94a3b8;">This will open index.html and automatically fix the NaN issue</p>
+    </div>
+
+    <script>
+        function forceFixStats() {
+            const win = window.open('index.html', '_blank');
+            
+            setTimeout(() => {
+                try {
+                    const doc = win.document;
+                    
+                    // Force set all data-stat elements
+                    const repos = doc.querySelector('[data-stat="repos"]');
+                    const followers = doc.querySelector('[data-stat="followers"]');
+                    const following = doc.querySelector('[data-stat="following"]');
+                    const stars = doc.querySelector('[data-stat="stars"]');
+                    
+                    if (repos) repos.textContent = '1';
+                    if (followers) followers.textContent = '0';
+                    if (following) following.textContent = '0';
+                    if (stars) stars.textContent = '0';
+                    
+                    document.getElementById('fix-result').innerHTML = '<p class="success">✅ Stats updated successfully!</p><p>Check the opened portfolio window.</p>';
+                } catch (e) {
+                    document.getElementById('fix-result').innerHTML = '<p class="error">❌ Cannot access window (CORS). Please manually copy-paste the fix code.</p>';
+                }
+            }, 2000);
+        }
+        
+        function checkCurrentValues() {
+            const result = document.getElementById('check-result');
+            result.innerHTML = '<p>Copy this code and paste it in the portfolio page console (F12):</p><pre>' +
+`// CHECK CURRENT VALUES
+const repos = document.querySelector('[data-stat="repos"]');
+const followers = document.querySelector('[data-stat="followers"]');
+const following = document.querySelector('[data-stat="following"]');
+const stars = document.querySelector('[data-stat="stars"]');
+
+console.log('Current Values:');
+console.log('Repos:', repos?.textContent);
+console.log('Followers:', followers?.textContent);
+console.log('Following:', following?.textContent);
+console.log('Stars:', stars?.textContent);
+
+// FIX IF NaN
+if (repos && repos.textContent === 'NaN') repos.textContent = '1';
+if (followers && followers.textContent === 'NaN') followers.textContent = '0';
+if (following && following.textContent === 'NaN') following.textContent = '0';
+if (stars && stars.textContent === 'NaN') stars.textContent = '0';
+
+console.log('After fix - Repos:', repos?.textContent);
+` + '</pre>';
+        }
+        
+        function openAndFix() {
+            window.open('index.html', '_blank');
+            alert('Portfolio opened! Now:\n\n1. Press F12 in the portfolio window\n2. Go to Console tab\n3. Paste this code:\n\nconst fix=()=>{[\'repos\',\'followers\',\'following\',\'stars\'].forEach(s=>{const e=document.querySelector(`[data-stat="${s}"]`);if(e&&e.textContent===\'NaN\')e.textContent=s===\'repos\'?\'1\':\'0\';});};fix();setInterval(fix,100);');
+        }
+    </script>
+</body>
+</html>

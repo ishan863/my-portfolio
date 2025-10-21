@@ -1,0 +1,871 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Portfolio Image Manager</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
+            color: #f1f5f9;
+            padding: 20px;
+            min-height: 100vh;
+        }
+        
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+        
+        header {
+            text-align: center;
+            margin-bottom: 40px;
+            padding: 30px;
+            background: rgba(59, 130, 246, 0.1);
+            border-radius: 12px;
+            border: 1px solid #3b82f6;
+        }
+        
+        h1 {
+            color: #3b82f6;
+            font-size: 2.5em;
+            margin-bottom: 10px;
+        }
+        
+        .subtitle {
+            color: #94a3b8;
+            font-size: 1.1em;
+        }
+        
+        .upload-section {
+            background: #1e293b;
+            padding: 30px;
+            border-radius: 12px;
+            margin-bottom: 30px;
+            border: 2px dashed #3b82f6;
+        }
+        
+        .image-category {
+            background: #334155;
+            padding: 25px;
+            border-radius: 12px;
+            margin-bottom: 25px;
+            border-left: 4px solid #3b82f6;
+        }
+        
+        .category-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        
+        .category-title {
+            font-size: 1.5em;
+            color: #60a5fa;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .category-status {
+            padding: 6px 15px;
+            border-radius: 20px;
+            font-size: 0.9em;
+            font-weight: bold;
+        }
+        
+        .status-uploaded {
+            background: #10b981;
+            color: white;
+        }
+        
+        .status-missing {
+            background: #ef4444;
+            color: white;
+        }
+        
+        .upload-area {
+            border: 2px dashed #475569;
+            border-radius: 8px;
+            padding: 40px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s;
+            background: #1e293b;
+        }
+        
+        .upload-area:hover {
+            border-color: #3b82f6;
+            background: #0f172a;
+        }
+        
+        .upload-area.dragover {
+            border-color: #10b981;
+            background: rgba(16, 185, 129, 0.1);
+        }
+        
+        .upload-icon {
+            font-size: 3em;
+            margin-bottom: 10px;
+        }
+        
+        .preview-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            margin-top: 20px;
+        }
+        
+        .preview-card {
+            background: #1e293b;
+            border-radius: 8px;
+            overflow: hidden;
+            border: 2px solid #475569;
+            transition: all 0.3s;
+        }
+        
+        .preview-card:hover {
+            border-color: #3b82f6;
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(59, 130, 246, 0.3);
+        }
+        
+        .preview-image {
+            width: 100%;
+            height: 250px;
+            object-fit: cover;
+            display: block;
+        }
+        
+        .preview-info {
+            padding: 15px;
+        }
+        
+        .preview-name {
+            font-weight: bold;
+            color: #60a5fa;
+            margin-bottom: 5px;
+            word-break: break-all;
+        }
+        
+        .preview-size {
+            color: #94a3b8;
+            font-size: 0.9em;
+        }
+        
+        .preview-actions {
+            display: flex;
+            gap: 10px;
+            margin-top: 15px;
+        }
+        
+        button {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 1em;
+            font-weight: 600;
+            transition: all 0.3s;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .btn-primary {
+            background: #3b82f6;
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            background: #2563eb;
+            transform: translateY(-2px);
+        }
+        
+        .btn-success {
+            background: #10b981;
+            color: white;
+            flex: 1;
+        }
+        
+        .btn-success:hover {
+            background: #059669;
+        }
+        
+        .btn-danger {
+            background: #ef4444;
+            color: white;
+            flex: 1;
+        }
+        
+        .btn-danger:hover {
+            background: #dc2626;
+        }
+        
+        .btn-secondary {
+            background: #6b7280;
+            color: white;
+        }
+        
+        .btn-secondary:hover {
+            background: #4b5563;
+        }
+        
+        input[type="file"] {
+            display: none;
+        }
+        
+        .info-box {
+            background: rgba(59, 130, 246, 0.1);
+            border: 1px solid #3b82f6;
+            padding: 15px;
+            border-radius: 8px;
+            margin-top: 15px;
+        }
+        
+        .info-box ul {
+            margin-left: 20px;
+            margin-top: 10px;
+        }
+        
+        .info-box li {
+            margin: 5px 0;
+            color: #cbd5e1;
+        }
+        
+        .success-message {
+            background: #10b981;
+            color: white;
+            padding: 15px 20px;
+            border-radius: 8px;
+            margin: 20px 0;
+            display: none;
+            animation: slideIn 0.3s ease;
+        }
+        
+        .error-message {
+            background: #ef4444;
+            color: white;
+            padding: 15px 20px;
+            border-radius: 8px;
+            margin: 20px 0;
+            display: none;
+            animation: slideIn 0.3s ease;
+        }
+        
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .current-image {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        
+        .current-image img {
+            max-width: 300px;
+            max-height: 300px;
+            border-radius: 8px;
+            border: 2px solid #3b82f6;
+        }
+        
+        .current-label {
+            display: inline-block;
+            background: #3b82f6;
+            color: white;
+            padding: 4px 12px;
+            border-radius: 4px;
+            font-size: 0.9em;
+            margin-bottom: 10px;
+        }
+        
+        .actions-bar {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 30px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+        
+        .loader {
+            display: none;
+            text-align: center;
+            padding: 20px;
+        }
+        
+        .loader.active {
+            display: block;
+        }
+        
+        .spinner {
+            border: 4px solid #334155;
+            border-top: 4px solid #3b82f6;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 15px;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        .dimension-info {
+            color: #94a3b8;
+            font-size: 0.85em;
+            margin-top: 5px;
+        }
+        
+        .quality-badge {
+            display: inline-block;
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-size: 0.75em;
+            font-weight: bold;
+            margin-left: 8px;
+        }
+        
+        .quality-hd {
+            background: #10b981;
+            color: white;
+        }
+        
+        .quality-sd {
+            background: #f59e0b;
+            color: white;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>🖼️ Portfolio Image Manager</h1>
+            <p class="subtitle">Upload, preview, and manage all portfolio images in HD quality</p>
+        </header>
+
+        <div class="actions-bar">
+            <button class="btn-primary" onclick="location.href='index.html'">
+                🏠 View Portfolio
+            </button>
+            <button class="btn-primary" onclick="saveAllChanges()">
+                💾 Save All Changes
+            </button>
+            <button class="btn-secondary" onclick="exportConfig()">
+                📤 Export Configuration
+            </button>
+            <button class="btn-secondary" onclick="resetAll()">
+                🔄 Reset All
+            </button>
+        </div>
+
+        <div class="success-message" id="successMessage"></div>
+        <div class="error-message" id="errorMessage"></div>
+
+        <!-- Avatar/Profile Image -->
+        <div class="image-category">
+            <div class="category-header">
+                <div class="category-title">
+                    👤 Profile Avatar
+                    <span class="category-status status-uploaded" id="status-avatar">✅ Uploaded</span>
+                </div>
+            </div>
+            
+            <div class="current-image" id="current-avatar">
+                <div class="current-label">Current Image</div>
+                <img src="./assets/images/avatar.jpg" alt="Current Avatar" onerror="this.src='data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 width=%22200%22 height=%22200%22><rect fill=%22%23334155%22 width=%22200%22 height=%22200%22/><text x=%2250%25%22 y=%2250%25%22 font-size=%2220%22 text-anchor=%22middle%22 dy=%22.3em%22 fill=%22%2394a3b8%22>No Image</text></svg>'">
+            </div>
+            
+            <div class="upload-area" onclick="document.getElementById('avatar-input').click()" 
+                 ondrop="handleDrop(event, 'avatar')" 
+                 ondragover="handleDragOver(event)"
+                 ondragleave="handleDragLeave(event)">
+                <div class="upload-icon">📤</div>
+                <p><strong>Click to upload</strong> or drag and drop</p>
+                <p style="color: #94a3b8; font-size: 0.9em; margin-top: 5px;">
+                    Recommended: 400x400px, Square, JPG/PNG
+                </p>
+            </div>
+            <input type="file" id="avatar-input" accept="image/*" onchange="handleFileSelect(event, 'avatar')">
+            
+            <div class="preview-container" id="preview-avatar"></div>
+            
+            <div class="info-box">
+                <strong>📍 Location:</strong> <code>assets/images/avatar.jpg</code><br>
+                <strong>📏 Recommended Size:</strong> 400x400px (1:1 ratio)<br>
+                <strong>💡 Usage:</strong> Hero section profile picture
+            </div>
+        </div>
+
+        <!-- About Section Photo -->
+        <div class="image-category">
+            <div class="category-header">
+                <div class="category-title">
+                    📷 About Section Photo
+                    <span class="category-status status-uploaded" id="status-about">✅ Uploaded</span>
+                </div>
+            </div>
+            
+            <div class="current-image" id="current-about">
+                <div class="current-label">Current Image</div>
+                <img src="./assets/images/about-photo.jpg" alt="Current About Photo" onerror="this.src='data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 width=%22300%22 height=%22200%22><rect fill=%22%23334155%22 width=%22300%22 height=%22200%22/><text x=%2250%25%22 y=%2250%25%22 font-size=%2220%22 text-anchor=%22middle%22 dy=%22.3em%22 fill=%22%2394a3b8%22>No Image</text></svg>'">
+            </div>
+            
+            <div class="upload-area" onclick="document.getElementById('about-input').click()"
+                 ondrop="handleDrop(event, 'about')"
+                 ondragover="handleDragOver(event)"
+                 ondragleave="handleDragLeave(event)">
+                <div class="upload-icon">📤</div>
+                <p><strong>Click to upload</strong> or drag and drop</p>
+                <p style="color: #94a3b8; font-size: 0.9em; margin-top: 5px;">
+                    Recommended: 600x800px, Portrait, JPG/PNG
+                </p>
+            </div>
+            <input type="file" id="about-input" accept="image/*" onchange="handleFileSelect(event, 'about')">
+            
+            <div class="preview-container" id="preview-about"></div>
+            
+            <div class="info-box">
+                <strong>📍 Location:</strong> <code>assets/images/about-photo.jpg</code><br>
+                <strong>📏 Recommended Size:</strong> 600x800px (3:4 ratio)<br>
+                <strong>💡 Usage:</strong> About section personal photo
+            </div>
+        </div>
+
+        <!-- Project Images -->
+        <div class="image-category">
+            <div class="category-header">
+                <div class="category-title">
+                    🚀 Project Images
+                    <span class="category-status status-missing" id="status-projects">⚠️ Optional</span>
+                </div>
+            </div>
+            
+            <div class="upload-area" onclick="document.getElementById('project-input').click()"
+                 ondrop="handleDrop(event, 'project')"
+                 ondragover="handleDragOver(event)"
+                 ondragleave="handleDragLeave(event)">
+                <div class="upload-icon">📤</div>
+                <p><strong>Click to upload multiple</strong> or drag and drop</p>
+                <p style="color: #94a3b8; font-size: 0.9em; margin-top: 5px;">
+                    Recommended: 1200x600px, Landscape, JPG/PNG (You can upload multiple at once)
+                </p>
+            </div>
+            <input type="file" id="project-input" accept="image/*" multiple onchange="handleFileSelect(event, 'project')">
+            
+            <div class="preview-container" id="preview-project"></div>
+            
+            <div class="info-box">
+                <strong>📍 Location:</strong> <code>assets/images/projects/</code><br>
+                <strong>📏 Recommended Size:</strong> 1200x600px (2:1 ratio)<br>
+                <strong>💡 Usage:</strong> Project showcase thumbnails<br>
+                <strong>🎯 Projects:</strong>
+                <ul>
+                    <li>chowmin-shop.jpg - Chowmin Shop App</li>
+                    <li>employee-manager.jpg - Employee Contact Manager</li>
+                    <li>pdf-merger.jpg - PDF Merger Application</li>
+                    <li>ai-photo-editor.jpg - AI Photo Editing Tool</li>
+                    <li>telegram-bot.jpg - Telegram Bot</li>
+                    <li>data-processing.jpg - Data Processing System</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Additional Images -->
+        <div class="image-category">
+            <div class="category-header">
+                <div class="category-title">
+                    ➕ Additional Images
+                    <span class="category-status status-missing" id="status-additional">➕ Custom</span>
+                </div>
+            </div>
+            
+            <div class="upload-area" onclick="document.getElementById('additional-input').click()"
+                 ondrop="handleDrop(event, 'additional')"
+                 ondragover="handleDragOver(event)"
+                 ondragleave="handleDragLeave(event)">
+                <div class="upload-icon">📤</div>
+                <p><strong>Upload any additional images</strong></p>
+                <p style="color: #94a3b8; font-size: 0.9em; margin-top: 5px;">
+                    For future use or custom sections
+                </p>
+            </div>
+            <input type="file" id="additional-input" accept="image/*" multiple onchange="handleFileSelect(event, 'additional')">
+            
+            <div class="preview-container" id="preview-additional"></div>
+        </div>
+
+        <div class="loader" id="loader">
+            <div class="spinner"></div>
+            <p>Processing images...</p>
+        </div>
+    </div>
+
+    <script>
+        // Store uploaded files
+        const uploadedFiles = {
+            avatar: null,
+            about: null,
+            project: [],
+            additional: []
+        };
+
+        // Drag and drop handlers
+        function handleDragOver(event) {
+            event.preventDefault();
+            event.currentTarget.classList.add('dragover');
+        }
+
+        function handleDragLeave(event) {
+            event.currentTarget.classList.remove('dragover');
+        }
+
+        function handleDrop(event, category) {
+            event.preventDefault();
+            event.currentTarget.classList.remove('dragover');
+            
+            const files = event.dataTransfer.files;
+            processFiles(files, category);
+        }
+
+        // File selection handler
+        function handleFileSelect(event, category) {
+            const files = event.target.files;
+            processFiles(files, category);
+        }
+
+        // Process uploaded files
+        function processFiles(files, category) {
+            const previewContainer = document.getElementById(`preview-${category}`);
+            
+            Array.from(files).forEach(file => {
+                if (!file.type.startsWith('image/')) {
+                    showError('Please upload only image files (JPG, PNG, etc.)');
+                    return;
+                }
+
+                // Check file size (max 10MB)
+                if (file.size > 10 * 1024 * 1024) {
+                    showError(`File ${file.name} is too large. Max size is 10MB.`);
+                    return;
+                }
+
+                // Store file
+                if (category === 'project' || category === 'additional') {
+                    uploadedFiles[category].push(file);
+                } else {
+                    uploadedFiles[category] = file;
+                }
+
+                // Create HD preview
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    const img = new Image();
+                    img.onload = function() {
+                        const quality = img.width >= 1000 || img.height >= 1000 ? 'HD' : 'SD';
+                        createPreviewCard(file, e.target.result, category, img.width, img.height, quality);
+                    };
+                    img.src = e.target.result;
+                };
+                reader.readAsDataURL(file);
+            });
+
+            // Update status
+            updateStatus(category);
+        }
+
+        // Create preview card with HD quality
+        function createPreviewCard(file, dataUrl, category, width, height, quality) {
+            const previewContainer = document.getElementById(`preview-${category}`);
+            
+            const card = document.createElement('div');
+            card.className = 'preview-card';
+            card.innerHTML = `
+                <img src="${dataUrl}" alt="${file.name}" class="preview-image">
+                <div class="preview-info">
+                    <div class="preview-name">${file.name}</div>
+                    <div class="preview-size">
+                        ${formatFileSize(file.size)}
+                        <span class="quality-badge quality-${quality.toLowerCase()}">${quality}</span>
+                    </div>
+                    <div class="dimension-info">${width} × ${height}px</div>
+                    <div class="preview-actions">
+                        <button class="btn-success" onclick="saveImage('${category}', '${file.name}', '${dataUrl}')">
+                            💾 Save
+                        </button>
+                        <button class="btn-danger" onclick="removePreview(this, '${category}', '${file.name}')">
+                            🗑️ Remove
+                        </button>
+                    </div>
+                </div>
+            `;
+            
+            previewContainer.appendChild(card);
+        }
+
+        // Format file size
+        function formatFileSize(bytes) {
+            if (bytes < 1024) return bytes + ' B';
+            if (bytes < 1024 * 1024) return (bytes / 1024).toFixed(2) + ' KB';
+            return (bytes / (1024 * 1024)).toFixed(2) + ' MB';
+        }
+
+        // Remove preview
+        function removePreview(button, category, filename) {
+            const card = button.closest('.preview-card');
+            card.remove();
+            
+            // Remove from uploadedFiles
+            if (category === 'project' || category === 'additional') {
+                uploadedFiles[category] = uploadedFiles[category].filter(f => f.name !== filename);
+            } else {
+                uploadedFiles[category] = null;
+            }
+            
+            updateStatus(category);
+            showSuccess(`Removed ${filename} from queue`);
+        }
+
+        // Save individual image
+        function saveImage(category, filename, dataUrl) {
+            showLoader(true);
+            
+            // Simulate saving process
+            setTimeout(() => {
+                const path = getImagePath(category, filename);
+                
+                // Download the image
+                const link = document.createElement('a');
+                link.download = filename;
+                link.href = dataUrl;
+                link.click();
+                
+                showLoader(false);
+                showSuccess(`✅ ${filename} ready! Place it in: ${path}`);
+                
+                // Update HTML reference instruction
+                updateHTMLInstruction(category, filename, path);
+            }, 1000);
+        }
+
+        // Get image path based on category
+        function getImagePath(category, filename) {
+            switch(category) {
+                case 'avatar':
+                    return 'assets/images/avatar.jpg';
+                case 'about':
+                    return 'assets/images/about-photo.jpg';
+                case 'project':
+                    return `assets/images/projects/${filename}`;
+                case 'additional':
+                    return `assets/images/${filename}`;
+                default:
+                    return `assets/images/${filename}`;
+            }
+        }
+
+        // Update HTML instruction
+        function updateHTMLInstruction(category, filename, path) {
+            if (category === 'project') {
+                console.log(`
+===========================================
+📝 UPDATE PORTFOLIO HTML:
+===========================================
+
+1. Open index.html
+2. Find the project card
+3. Update image src to: "${path}"
+
+Example:
+<img src="${path}" alt="Project Image">
+
+===========================================
+                `);
+            }
+        }
+
+        // Save all changes
+        function saveAllChanges() {
+            showLoader(true);
+            
+            const allFiles = [];
+            Object.keys(uploadedFiles).forEach(category => {
+                if (Array.isArray(uploadedFiles[category])) {
+                    allFiles.push(...uploadedFiles[category]);
+                } else if (uploadedFiles[category]) {
+                    allFiles.push(uploadedFiles[category]);
+                }
+            });
+            
+            if (allFiles.length === 0) {
+                showLoader(false);
+                showError('No images to save. Please upload images first.');
+                return;
+            }
+            
+            // Download all images
+            allFiles.forEach((file, index) => {
+                setTimeout(() => {
+                    const reader = new FileReader();
+                    reader.onload = function(e) {
+                        const link = document.createElement('a');
+                        link.download = file.name;
+                        link.href = e.target.result;
+                        link.click();
+                    };
+                    reader.readAsDataURL(file);
+                }, index * 500);
+            });
+            
+            setTimeout(() => {
+                showLoader(false);
+                showSuccess(`✅ All ${allFiles.length} images downloaded! Place them in their respective folders.`);
+                generateInstallGuide();
+            }, allFiles.length * 500 + 1000);
+        }
+
+        // Generate installation guide
+        function generateInstallGuide() {
+            let guide = '\n===========================================\n';
+            guide += '📋 IMAGE INSTALLATION GUIDE\n';
+            guide += '===========================================\n\n';
+            
+            if (uploadedFiles.avatar) {
+                guide += `1. ${uploadedFiles.avatar.name} → assets/images/avatar.jpg\n`;
+            }
+            if (uploadedFiles.about) {
+                guide += `2. ${uploadedFiles.about.name} → assets/images/about-photo.jpg\n`;
+            }
+            if (uploadedFiles.project.length > 0) {
+                guide += '\nProject Images:\n';
+                uploadedFiles.project.forEach((file, i) => {
+                    guide += `   ${i+1}. ${file.name} → assets/images/projects/\n`;
+                });
+            }
+            
+            guide += '\n===========================================\n';
+            console.log(guide);
+            alert(guide);
+        }
+
+        // Update status indicators
+        function updateStatus(category) {
+            const statusEl = document.getElementById(`status-${category}`);
+            if (!statusEl) return;
+            
+            let hasFiles = false;
+            if (Array.isArray(uploadedFiles[category])) {
+                hasFiles = uploadedFiles[category].length > 0;
+            } else {
+                hasFiles = uploadedFiles[category] !== null;
+            }
+            
+            if (hasFiles) {
+                statusEl.textContent = '✅ Ready';
+                statusEl.className = 'category-status status-uploaded';
+            }
+        }
+
+        // Show/hide loader
+        function showLoader(show) {
+            const loader = document.getElementById('loader');
+            if (show) {
+                loader.classList.add('active');
+            } else {
+                loader.classList.remove('active');
+            }
+        }
+
+        // Show success message
+        function showSuccess(message) {
+            const el = document.getElementById('successMessage');
+            el.textContent = message;
+            el.style.display = 'block';
+            setTimeout(() => {
+                el.style.display = 'none';
+            }, 5000);
+        }
+
+        // Show error message
+        function showError(message) {
+            const el = document.getElementById('errorMessage');
+            el.textContent = message;
+            el.style.display = 'block';
+            setTimeout(() => {
+                el.style.display = 'none';
+            }, 5000);
+        }
+
+        // Export configuration
+        function exportConfig() {
+            const config = {
+                timestamp: new Date().toISOString(),
+                images: {
+                    avatar: uploadedFiles.avatar ? uploadedFiles.avatar.name : null,
+                    about: uploadedFiles.about ? uploadedFiles.about.name : null,
+                    projects: uploadedFiles.project.map(f => f.name),
+                    additional: uploadedFiles.additional.map(f => f.name)
+                }
+            };
+            
+            const blob = new Blob([JSON.stringify(config, null, 2)], { type: 'application/json' });
+            const link = document.createElement('a');
+            link.download = 'portfolio-images-config.json';
+            link.href = URL.createObjectURL(blob);
+            link.click();
+            
+            showSuccess('Configuration exported!');
+        }
+
+        // Reset all
+        function resetAll() {
+            if (confirm('Are you sure you want to clear all uploaded images?')) {
+                uploadedFiles.avatar = null;
+                uploadedFiles.about = null;
+                uploadedFiles.project = [];
+                uploadedFiles.additional = [];
+                
+                document.getElementById('preview-avatar').innerHTML = '';
+                document.getElementById('preview-about').innerHTML = '';
+                document.getElementById('preview-project').innerHTML = '';
+                document.getElementById('preview-additional').innerHTML = '';
+                
+                showSuccess('All uploads cleared!');
+            }
+        }
+
+        // Check existing images on load
+        window.addEventListener('load', function() {
+            // Try to load existing images
+            const avatarImg = document.querySelector('#current-avatar img');
+            const aboutImg = document.querySelector('#current-about img');
+            
+            avatarImg.onerror = function() {
+                document.getElementById('status-avatar').textContent = '❌ Missing';
+                document.getElementById('status-avatar').className = 'category-status status-missing';
+            };
+            
+            aboutImg.onerror = function() {
+                document.getElementById('status-about').textContent = '❌ Missing';
+                document.getElementById('status-about').className = 'category-status status-missing';
+            };
+        });
+    </script>
+</body>
+</html>

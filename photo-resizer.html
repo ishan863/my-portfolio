@@ -1,0 +1,409 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Professional Photo Resizer - Goura Hari Patel</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+        }
+        
+        h1 {
+            text-align: center;
+            color: #333;
+            margin-bottom: 30px;
+            font-size: 2.5em;
+        }
+        
+        .upload-section {
+            text-align: center;
+            margin-bottom: 40px;
+            padding: 40px;
+            border: 3px dashed #667eea;
+            border-radius: 15px;
+            background: #f8f9ff;
+        }
+        
+        .file-input {
+            display: none;
+        }
+        
+        .upload-btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 15px 30px;
+            border: none;
+            border-radius: 10px;
+            font-size: 1.1em;
+            cursor: pointer;
+            transition: transform 0.3s;
+        }
+        
+        .upload-btn:hover {
+            transform: translateY(-2px);
+        }
+        
+        .preview-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 30px;
+            margin-top: 40px;
+        }
+        
+        .preview-card {
+            background: #f8f9ff;
+            border-radius: 15px;
+            padding: 20px;
+            text-align: center;
+            border: 2px solid #e1e5f7;
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+        
+        .preview-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(102, 126, 234, 0.2);
+        }
+        
+        .preview-card h3 {
+            color: #667eea;
+            margin-bottom: 15px;
+            font-size: 1.3em;
+        }
+        
+        .preview-image {
+            border: 3px solid #667eea;
+            margin: 15px auto;
+            background: #fff;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #999;
+            font-size: 14px;
+            overflow: hidden;
+        }
+        
+        .avatar-preview { 
+            width: 120px; 
+            height: 120px; 
+            border-radius: 50%; 
+        }
+        
+        .about-preview { 
+            width: 200px; 
+            height: 200px; 
+            border-radius: 15px; 
+        }
+        
+        .og-preview { 
+            width: 240px; 
+            height: 126px; 
+            border-radius: 10px; 
+        }
+        
+        .favicon-preview { 
+            width: 64px; 
+            height: 64px; 
+            border-radius: 8px; 
+        }
+        
+        .download-btn {
+            background: #28a745;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            margin-top: 15px;
+            font-size: 0.9em;
+            transition: background 0.3s;
+        }
+        
+        .download-btn:hover {
+            background: #218838;
+        }
+        
+        .download-btn:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+        }
+        
+        .instructions {
+            background: #e8f4f8;
+            padding: 25px;
+            border-radius: 15px;
+            margin-top: 30px;
+            border-left: 5px solid #17a2b8;
+        }
+        
+        .instructions h3 {
+            color: #17a2b8;
+            margin-bottom: 15px;
+        }
+        
+        .instructions ol {
+            margin-left: 20px;
+        }
+        
+        .instructions li {
+            margin-bottom: 8px;
+            line-height: 1.6;
+        }
+        
+        canvas {
+            display: none;
+        }
+        
+        .filename {
+            font-family: monospace;
+            background: #f1f3f5;
+            padding: 5px 10px;
+            border-radius: 5px;
+            margin: 5px 0;
+            font-size: 0.9em;
+        }
+        
+        .size-info {
+            color: #666;
+            font-size: 0.85em;
+            margin-bottom: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>📸 Professional Photo Setup</h1>
+        <p style="text-align: center; color: #666; font-size: 1.1em; margin-bottom: 30px;">
+            Create perfectly sized images for your portfolio from your professional photo
+        </p>
+        
+        <div class="upload-section">
+            <h3>📤 Upload Your Professional Photo</h3>
+            <p style="margin: 15px 0; color: #666;">Select your professional photo to generate all required sizes</p>
+            <input type="file" id="fileInput" class="file-input" accept="image/*">
+            <button class="upload-btn" onclick="document.getElementById('fileInput').click()">
+                Choose Professional Photo
+            </button>
+        </div>
+        
+        <div class="preview-grid" id="previewGrid" style="display: none;">
+            <!-- Avatar Image -->
+            <div class="preview-card">
+                <h3>🎯 Hero Avatar</h3>
+                <div class="size-info">120×120px • Circular</div>
+                <div class="filename">avatar.jpg</div>
+                <div class="preview-image avatar-preview" id="avatarPreview">
+                    Upload image to preview
+                </div>
+                <button class="download-btn" id="downloadAvatar" disabled>
+                    Download Avatar
+                </button>
+                <p style="font-size: 0.8em; color: #666; margin-top: 10px;">
+                    Used in hero section and navigation
+                </p>
+            </div>
+            
+            <!-- About Photo -->
+            <div class="preview-card">
+                <h3>👤 About Section</h3>
+                <div class="size-info">400×400px • Square</div>
+                <div class="filename">about-photo.jpg</div>
+                <div class="preview-image about-preview" id="aboutPreview">
+                    Upload image to preview
+                </div>
+                <button class="download-btn" id="downloadAbout" disabled>
+                    Download About Photo
+                </button>
+                <p style="font-size: 0.8em; color: #666; margin-top: 10px;">
+                    Used in about section
+                </p>
+            </div>
+            
+            <!-- OG Image -->
+            <div class="preview-card">
+                <h3>🌐 Social Media</h3>
+                <div class="size-info">1200×630px • Landscape</div>
+                <div class="filename">og-image.jpg</div>
+                <div class="preview-image og-preview" id="ogPreview">
+                    Upload image to preview
+                </div>
+                <button class="download-btn" id="downloadOG" disabled>
+                    Download OG Image
+                </button>
+                <p style="font-size: 0.8em; color: #666; margin-top: 10px;">
+                    Used when sharing on social media
+                </p>
+            </div>
+            
+            <!-- Favicon -->
+            <div class="preview-card">
+                <h3>🔖 Browser Icon</h3>
+                <div class="size-info">64×64px • Square</div>
+                <div class="filename">favicon.png</div>
+                <div class="preview-image favicon-preview" id="faviconPreview">
+                    Upload image to preview
+                </div>
+                <button class="download-btn" id="downloadFavicon" disabled>
+                    Download Favicon
+                </button>
+                <p style="font-size: 0.8em; color: #666; margin-top: 10px;">
+                    Used in browser tab
+                </p>
+            </div>
+        </div>
+        
+        <div class="instructions">
+            <h3>📋 How to Use:</h3>
+            <ol>
+                <li><strong>Upload:</strong> Click "Choose Professional Photo" and select your image</li>
+                <li><strong>Preview:</strong> See how your photo will look in each size</li>
+                <li><strong>Download:</strong> Click each download button to save the resized images</li>
+                <li><strong>Save:</strong> Place all downloaded images in your <code>assets/images/</code> folder</li>
+                <li><strong>View:</strong> Open your portfolio to see the updated images</li>
+            </ol>
+            
+            <h3 style="margin-top: 20px;">💡 Tips for Best Results:</h3>
+            <ul style="margin-left: 20px;">
+                <li>Use a high-resolution photo (at least 1200px wide)</li>
+                <li>Ensure good lighting and professional appearance</li>
+                <li>Face should be clearly visible and centered</li>
+                <li>Professional attire recommended</li>
+            </ul>
+        </div>
+    </div>
+    
+    <canvas id="canvas"></canvas>
+    
+    <script>
+        const fileInput = document.getElementById('fileInput');
+        const previewGrid = document.getElementById('previewGrid');
+        const canvas = document.getElementById('canvas');
+        const ctx = canvas.getContext('2d');
+        
+        let originalImage = null;
+        
+        fileInput.addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            if (file && file.type.startsWith('image/')) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    const img = new Image();
+                    img.onload = function() {
+                        originalImage = img;
+                        generatePreviews();
+                        previewGrid.style.display = 'grid';
+                    };
+                    img.src = e.target.result;
+                };
+                reader.readAsDataURL(file);
+            }
+        });
+        
+        function generatePreviews() {
+            if (!originalImage) return;
+            
+            // Generate Avatar (120x120, circular crop)
+            generatePreview('avatarPreview', 'downloadAvatar', 120, 120, true);
+            
+            // Generate About Photo (400x400, square crop)
+            generatePreview('aboutPreview', 'downloadAbout', 400, 400, false);
+            
+            // Generate OG Image (1200x630, landscape crop)
+            generatePreview('ogPreview', 'downloadOG', 1200, 630, false);
+            
+            // Generate Favicon (64x64, square crop)
+            generatePreview('faviconPreview', 'downloadFavicon', 64, 64, false);
+        }
+        
+        function generatePreview(previewId, buttonId, width, height, isCircular) {
+            const preview = document.getElementById(previewId);
+            const button = document.getElementById(buttonId);
+            
+            // Create preview
+            canvas.width = width;
+            canvas.height = height;
+            
+            // Calculate crop dimensions to maintain aspect ratio
+            const sourceRatio = originalImage.width / originalImage.height;
+            const targetRatio = width / height;
+            
+            let sourceX = 0, sourceY = 0, sourceWidth = originalImage.width, sourceHeight = originalImage.height;
+            
+            if (sourceRatio > targetRatio) {
+                // Source is wider, crop width
+                sourceWidth = originalImage.height * targetRatio;
+                sourceX = (originalImage.width - sourceWidth) / 2;
+            } else {
+                // Source is taller, crop height
+                sourceHeight = originalImage.width / targetRatio;
+                sourceY = (originalImage.height - sourceHeight) / 2;
+            }
+            
+            // Clear canvas and draw
+            ctx.clearRect(0, 0, width, height);
+            
+            if (isCircular) {
+                // Create circular clip
+                ctx.save();
+                ctx.beginPath();
+                ctx.arc(width/2, height/2, Math.min(width, height)/2, 0, Math.PI * 2);
+                ctx.clip();
+            }
+            
+            ctx.drawImage(originalImage, sourceX, sourceY, sourceWidth, sourceHeight, 0, 0, width, height);
+            
+            if (isCircular) {
+                ctx.restore();
+            }
+            
+            const dataURL = canvas.toDataURL('image/jpeg', 0.9);
+            
+            // Update preview
+            preview.innerHTML = `<img src="${dataURL}" style="width: 100%; height: 100%; object-fit: cover;">`;
+            
+            // Enable download button
+            button.disabled = false;
+            button.onclick = function() {
+                downloadImage(dataURL, getFileName(buttonId));
+            };
+        }
+        
+        function getFileName(buttonId) {
+            const fileNames = {
+                'downloadAvatar': 'avatar.jpg',
+                'downloadAbout': 'about-photo.jpg',
+                'downloadOG': 'og-image.jpg',
+                'downloadFavicon': 'favicon.png'
+            };
+            return fileNames[buttonId] || 'image.jpg';
+        }
+        
+        function downloadImage(dataURL, filename) {
+            const link = document.createElement('a');
+            link.download = filename;
+            link.href = dataURL;
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        }
+    </script>
+</body>
+</html>

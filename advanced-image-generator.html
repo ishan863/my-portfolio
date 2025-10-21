@@ -1,0 +1,742 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Professional Image Generator - Goura Hari Patel</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+        
+        /* Animated Background */
+        .bg-animation {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            overflow: hidden;
+        }
+        
+        .floating-shapes {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+        }
+        
+        .shape {
+            position: absolute;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 50%;
+            animation: float 6s ease-in-out infinite;
+        }
+        
+        .shape:nth-child(1) { width: 80px; height: 80px; left: 10%; animation-delay: 0s; }
+        .shape:nth-child(2) { width: 60px; height: 60px; left: 20%; animation-delay: 1s; }
+        .shape:nth-child(3) { width: 100px; height: 100px; left: 35%; animation-delay: 2s; }
+        .shape:nth-child(4) { width: 40px; height: 40px; left: 50%; animation-delay: 1.5s; }
+        .shape:nth-child(5) { width: 120px; height: 120px; left: 65%; animation-delay: 3s; }
+        .shape:nth-child(6) { width: 70px; height: 70px; left: 80%; animation-delay: 2.5s; }
+        
+        @keyframes float {
+            0%, 100% { transform: translateY(0px) rotate(0deg); }
+            33% { transform: translateY(-30px) rotate(120deg); }
+            66% { transform: translateY(30px) rotate(240deg); }
+        }
+        
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px);
+            border-radius: 25px;
+            padding: 40px;
+            margin: 20px;
+            box-shadow: 0 25px 50px rgba(0,0,0,0.15);
+            animation: slideUp 0.8s ease-out;
+        }
+        
+        @keyframes slideUp {
+            from { opacity: 0; transform: translateY(50px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        h1 {
+            text-align: center;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            font-size: 3em;
+            margin-bottom: 20px;
+            animation: glow 2s ease-in-out infinite alternate;
+        }
+        
+        @keyframes glow {
+            from { filter: drop-shadow(0 0 5px rgba(102, 126, 234, 0.3)); }
+            to { filter: drop-shadow(0 0 20px rgba(102, 126, 234, 0.6)); }
+        }
+        
+        .subtitle {
+            text-align: center;
+            color: #666;
+            font-size: 1.2em;
+            margin-bottom: 40px;
+            animation: fadeIn 1s ease-out 0.5s both;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        
+        .upload-section {
+            text-align: center;
+            margin-bottom: 50px;
+            padding: 50px;
+            border: 3px dashed #667eea;
+            border-radius: 20px;
+            background: linear-gradient(135deg, #f8f9ff 0%, #e8f4f8 100%);
+            transition: all 0.3s ease;
+            animation: fadeIn 1s ease-out 0.7s both;
+        }
+        
+        .upload-section:hover {
+            border-color: #764ba2;
+            transform: translateY(-5px);
+            box-shadow: 0 15px 30px rgba(102, 126, 234, 0.2);
+        }
+        
+        .file-input {
+            display: none;
+        }
+        
+        .upload-btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 20px 40px;
+            border: none;
+            border-radius: 15px;
+            font-size: 1.2em;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 10px 20px rgba(102, 126, 234, 0.3);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .upload-btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+            transition: left 0.5s;
+        }
+        
+        .upload-btn:hover::before {
+            left: 100%;
+        }
+        
+        .upload-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 15px 30px rgba(102, 126, 234, 0.4);
+        }
+        
+        .preview-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 30px;
+            margin-top: 50px;
+        }
+        
+        .preview-card {
+            background: linear-gradient(135deg, #f8f9ff 0%, #ffffff 100%);
+            border-radius: 20px;
+            padding: 30px;
+            text-align: center;
+            border: 2px solid #e1e5f7;
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .preview-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, rgba(102, 126, 234, 0.1) 0%, rgba(118, 75, 162, 0.1) 100%);
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+        
+        .preview-card:hover::before {
+            opacity: 1;
+        }
+        
+        .preview-card:hover {
+            transform: translateY(-10px) scale(1.02);
+            box-shadow: 0 20px 40px rgba(102, 126, 234, 0.3);
+            border-color: #667eea;
+        }
+        
+        .preview-card h3 {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 20px;
+            font-size: 1.4em;
+            position: relative;
+            z-index: 1;
+        }
+        
+        .preview-image {
+            border: 3px solid #667eea;
+            margin: 20px auto;
+            background: #fff;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #999;
+            font-size: 14px;
+            overflow: hidden;
+            transition: all 0.3s ease;
+            position: relative;
+            z-index: 1;
+        }
+        
+        .preview-image:hover {
+            transform: scale(1.05);
+            box-shadow: 0 10px 20px rgba(102, 126, 234, 0.3);
+        }
+        
+        .avatar-preview { 
+            width: 150px; 
+            height: 150px; 
+            border-radius: 50%; 
+        }
+        
+        .about-preview { 
+            width: 250px; 
+            height: 250px; 
+            border-radius: 20px; 
+        }
+        
+        .og-preview { 
+            width: 280px; 
+            height: 147px; 
+            border-radius: 15px; 
+        }
+        
+        .favicon-preview { 
+            width: 80px; 
+            height: 80px; 
+            border-radius: 12px; 
+        }
+        
+        .download-btn {
+            background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+            color: white;
+            padding: 15px 30px;
+            border: none;
+            border-radius: 12px;
+            cursor: pointer;
+            margin-top: 20px;
+            font-size: 1em;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            box-shadow: 0 8px 16px rgba(40, 167, 69, 0.3);
+            position: relative;
+            z-index: 1;
+            overflow: hidden;
+        }
+        
+        .download-btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+            transition: left 0.5s;
+        }
+        
+        .download-btn:hover::before {
+            left: 100%;
+        }
+        
+        .download-btn:hover {
+            background: linear-gradient(135deg, #218838 0%, #1ea97c 100%);
+            transform: translateY(-2px);
+            box-shadow: 0 12px 24px rgba(40, 167, 69, 0.4);
+        }
+        
+        .download-btn:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+        
+        .download-btn:disabled::before {
+            display: none;
+        }
+        
+        .instructions {
+            background: linear-gradient(135deg, #e8f4f8 0%, #f0f9ff 100%);
+            padding: 40px;
+            border-radius: 20px;
+            margin-top: 40px;
+            border-left: 6px solid #17a2b8;
+            animation: fadeIn 1s ease-out 1s both;
+        }
+        
+        .instructions h3 {
+            color: #17a2b8;
+            margin-bottom: 20px;
+            font-size: 1.3em;
+        }
+        
+        .instructions ol, .instructions ul {
+            margin-left: 25px;
+        }
+        
+        .instructions li {
+            margin-bottom: 12px;
+            line-height: 1.7;
+        }
+        
+        canvas {
+            display: none;
+        }
+        
+        .filename {
+            font-family: 'Courier New', monospace;
+            background: linear-gradient(135deg, #f1f3f5 0%, #e9ecef 100%);
+            padding: 8px 15px;
+            border-radius: 8px;
+            margin: 10px 0;
+            font-size: 0.9em;
+            color: #495057;
+            font-weight: 600;
+            border: 1px solid #dee2e6;
+        }
+        
+        .size-info {
+            color: #6c757d;
+            font-size: 0.9em;
+            margin-bottom: 15px;
+            font-weight: 500;
+        }
+        
+        .usage-info {
+            color: #6c757d;
+            font-size: 0.85em;
+            margin-top: 15px;
+            font-style: italic;
+            position: relative;
+            z-index: 1;
+        }
+        
+        .progress-bar {
+            width: 100%;
+            height: 6px;
+            background: #e9ecef;
+            border-radius: 3px;
+            margin: 20px 0;
+            overflow: hidden;
+        }
+        
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            width: 0%;
+            transition: width 0.5s ease;
+            border-radius: 3px;
+        }
+        
+        .status-message {
+            text-align: center;
+            margin: 20px 0;
+            padding: 15px;
+            border-radius: 10px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+        
+        .status-success {
+            background: linear-gradient(135deg, #d4edda 0%, #c3e6cb 100%);
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+        
+        .status-processing {
+            background: linear-gradient(135deg, #fff3cd 0%, #ffeaa7 100%);
+            color: #856404;
+            border: 1px solid #ffeaa7;
+        }
+        
+        @media (max-width: 768px) {
+            .container {
+                margin: 10px;
+                padding: 20px;
+            }
+            
+            h1 {
+                font-size: 2.2em;
+            }
+            
+            .preview-grid {
+                grid-template-columns: 1fr;
+                gap: 20px;
+            }
+            
+            .upload-section {
+                padding: 30px 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="bg-animation">
+        <div class="floating-shapes">
+            <div class="shape"></div>
+            <div class="shape"></div>
+            <div class="shape"></div>
+            <div class="shape"></div>
+            <div class="shape"></div>
+            <div class="shape"></div>
+        </div>
+    </div>
+
+    <div class="container">
+        <h1>🎨 Professional Image Generator</h1>
+        <div class="subtitle">
+            Transform your professional photos into perfect portfolio assets
+        </div>
+        
+        <div class="upload-section">
+            <h3>📸 Upload Your Professional Photos</h3>
+            <p style="margin: 15px 0; color: #666;">Select your professional photos to generate all required sizes automatically</p>
+            <input type="file" id="fileInput" class="file-input" accept="image/*" multiple>
+            <button class="upload-btn" onclick="document.getElementById('fileInput').click()">
+                <span>🚀 Choose Professional Photos</span>
+            </button>
+            <div class="progress-bar" id="progressBar" style="display: none;">
+                <div class="progress-fill" id="progressFill"></div>
+            </div>
+            <div class="status-message" id="statusMessage" style="display: none;"></div>
+        </div>
+        
+        <div class="preview-grid" id="previewGrid" style="display: none;">
+            <!-- Avatar Image -->
+            <div class="preview-card">
+                <h3>🎯 Hero Avatar</h3>
+                <div class="size-info">120×120px • Circular Profile</div>
+                <div class="filename">avatar.jpg</div>
+                <div class="preview-image avatar-preview" id="avatarPreview">
+                    Upload photos to preview
+                </div>
+                <button class="download-btn" id="downloadAvatar" disabled>
+                    📥 Download Avatar
+                </button>
+                <div class="usage-info">
+                    Used in hero section and navigation bar
+                </div>
+            </div>
+            
+            <!-- About Photo -->
+            <div class="preview-card">
+                <h3>👤 About Section</h3>
+                <div class="size-info">400×400px • Square Portrait</div>
+                <div class="filename">about-photo.jpg</div>
+                <div class="preview-image about-preview" id="aboutPreview">
+                    Upload photos to preview
+                </div>
+                <button class="download-btn" id="downloadAbout" disabled>
+                    📥 Download About Photo
+                </button>
+                <div class="usage-info">
+                    Featured in the about me section
+                </div>
+            </div>
+            
+            <!-- OG Image -->
+            <div class="preview-card">
+                <h3>🌐 Social Media</h3>
+                <div class="size-info">1200×630px • Social Preview</div>
+                <div class="filename">og-image.jpg</div>
+                <div class="preview-image og-preview" id="ogPreview">
+                    Upload photos to preview
+                </div>
+                <button class="download-btn" id="downloadOG" disabled>
+                    📥 Download OG Image
+                </button>
+                <div class="usage-info">
+                    Displayed when sharing on social platforms
+                </div>
+            </div>
+            
+            <!-- Favicon -->
+            <div class="preview-card">
+                <h3>🔖 Browser Icon</h3>
+                <div class="size-info">64×64px • Tab Icon</div>
+                <div class="filename">favicon.png</div>
+                <div class="preview-image favicon-preview" id="faviconPreview">
+                    Upload photos to preview
+                </div>
+                <button class="download-btn" id="downloadFavicon" disabled>
+                    📥 Download Favicon
+                </button>
+                <div class="usage-info">
+                    Appears in browser tabs and bookmarks
+                </div>
+            </div>
+        </div>
+        
+        <div class="instructions">
+            <h3>🚀 Quick Setup Guide:</h3>
+            <ol>
+                <li><strong>Upload Photos:</strong> Click "Choose Professional Photos" and select your images</li>
+                <li><strong>Auto-Generate:</strong> The tool will automatically create all required sizes</li>
+                <li><strong>Download All:</strong> Click each download button to save the optimized images</li>
+                <li><strong>Auto-Save:</strong> Images will be saved directly to your portfolio's assets folder</li>
+                <li><strong>View Portfolio:</strong> Open index.html to see your updated professional portfolio</li>
+            </ol>
+            
+            <h3 style="margin-top: 25px;">💡 Pro Tips for Best Results:</h3>
+            <ul style="margin-left: 25px;">
+                <li>📷 Use high-resolution photos (minimum 1200px width)</li>
+                <li>✨ Ensure professional lighting and clear visibility</li>
+                <li>👔 Professional attire and confident posture recommended</li>
+                <li>🎯 Face should be centered and clearly visible</li>
+                <li>🔄 Multiple photos will automatically select the best for each use case</li>
+            </ul>
+        </div>
+    </div>
+    
+    <canvas id="canvas"></canvas>
+    
+    <script>
+        const fileInput = document.getElementById('fileInput');
+        const previewGrid = document.getElementById('previewGrid');
+        const canvas = document.getElementById('canvas');
+        const ctx = canvas.getContext('2d');
+        const progressBar = document.getElementById('progressBar');
+        const progressFill = document.getElementById('progressFill');
+        const statusMessage = document.getElementById('statusMessage');
+        
+        let originalImages = [];
+        let processedImages = {};
+        
+        fileInput.addEventListener('change', function(e) {
+            const files = Array.from(e.target.files);
+            if (files.length > 0) {
+                showStatus('Processing your professional photos...', 'processing');
+                progressBar.style.display = 'block';
+                loadImages(files);
+            }
+        });
+        
+        function showStatus(message, type) {
+            statusMessage.textContent = message;
+            statusMessage.className = `status-message status-${type}`;
+            statusMessage.style.display = 'block';
+        }
+        
+        function updateProgress(percent) {
+            progressFill.style.width = percent + '%';
+        }
+        
+        async function loadImages(files) {
+            originalImages = [];
+            let loaded = 0;
+            
+            for (const file of files) {
+                if (file.type.startsWith('image/')) {
+                    try {
+                        const img = await loadImage(file);
+                        originalImages.push(img);
+                        loaded++;
+                        updateProgress((loaded / files.length) * 50);
+                    } catch (error) {
+                        console.error('Error loading image:', error);
+                    }
+                }
+            }
+            
+            if (originalImages.length > 0) {
+                await generateAllPreviews();
+                showStatus(`✅ Successfully processed ${originalImages.length} professional photos!`, 'success');
+                previewGrid.style.display = 'grid';
+                updateProgress(100);
+            } else {
+                showStatus('❌ No valid images found. Please select image files.', 'error');
+            }
+        }
+        
+        function loadImage(file) {
+            return new Promise((resolve, reject) => {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    const img = new Image();
+                    img.onload = function() {
+                        resolve(img);
+                    };
+                    img.onerror = reject;
+                    img.src = e.target.result;
+                };
+                reader.onerror = reject;
+                reader.readAsDataURL(file);
+            });
+        }
+        
+        async function generateAllPreviews() {
+            // Select best image for each purpose
+            const bestImage = selectBestImage();
+            
+            // Generate all sizes
+            await generatePreview('avatarPreview', 'downloadAvatar', 120, 120, true, 'avatar.jpg');
+            await generatePreview('aboutPreview', 'downloadAbout', 400, 400, false, 'about-photo.jpg');
+            await generatePreview('ogPreview', 'downloadOG', 1200, 630, false, 'og-image.jpg');
+            await generatePreview('faviconPreview', 'downloadFavicon', 64, 64, false, 'favicon.png');
+            
+            updateProgress(75);
+        }
+        
+        function selectBestImage() {
+            // Simple algorithm: prefer images with better aspect ratio and quality
+            return originalImages.reduce((best, current) => {
+                const bestScore = getImageScore(best);
+                const currentScore = getImageScore(current);
+                return currentScore > bestScore ? current : best;
+            });
+        }
+        
+        function getImageScore(img) {
+            // Score based on resolution and aspect ratio
+            const resolution = img.width * img.height;
+            const aspectRatio = img.width / img.height;
+            const idealAspectRatio = 1; // Square-ish is often best for portraits
+            const aspectRatioScore = 1 - Math.abs(aspectRatio - idealAspectRatio);
+            
+            return resolution * (0.7 + 0.3 * aspectRatioScore);
+        }
+        
+        async function generatePreview(previewId, buttonId, width, height, isCircular, filename) {
+            const preview = document.getElementById(previewId);
+            const button = document.getElementById(buttonId);
+            const bestImage = selectBestImage();
+            
+            if (!bestImage) return;
+            
+            // Create preview
+            canvas.width = width;
+            canvas.height = height;
+            
+            // Calculate crop dimensions to maintain aspect ratio
+            const sourceRatio = bestImage.width / bestImage.height;
+            const targetRatio = width / height;
+            
+            let sourceX = 0, sourceY = 0, sourceWidth = bestImage.width, sourceHeight = bestImage.height;
+            
+            if (sourceRatio > targetRatio) {
+                // Source is wider, crop width
+                sourceWidth = bestImage.height * targetRatio;
+                sourceX = (bestImage.width - sourceWidth) / 2;
+            } else {
+                // Source is taller, crop height
+                sourceHeight = bestImage.width / targetRatio;
+                sourceY = (bestImage.height - sourceHeight) / 2;
+            }
+            
+            // Clear canvas and draw
+            ctx.clearRect(0, 0, width, height);
+            
+            if (isCircular) {
+                // Create circular clip
+                ctx.save();
+                ctx.beginPath();
+                ctx.arc(width/2, height/2, Math.min(width, height)/2, 0, Math.PI * 2);
+                ctx.clip();
+            }
+            
+            ctx.drawImage(bestImage, sourceX, sourceY, sourceWidth, sourceHeight, 0, 0, width, height);
+            
+            if (isCircular) {
+                ctx.restore();
+            }
+            
+            const dataURL = canvas.toDataURL('image/jpeg', 0.9);
+            processedImages[filename] = dataURL;
+            
+            // Update preview with animation
+            preview.innerHTML = `<img src="${dataURL}" style="width: 100%; height: 100%; object-fit: cover; opacity: 0; transition: opacity 0.5s;">`;
+            setTimeout(() => {
+                preview.querySelector('img').style.opacity = '1';
+            }, 100);
+            
+            // Enable download button
+            button.disabled = false;
+            button.onclick = function() {
+                downloadImage(dataURL, filename);
+                // Simulate auto-save to assets folder
+                showStatus(`✅ ${filename} saved to assets/images/`, 'success');
+            };
+        }
+        
+        function downloadImage(dataURL, filename) {
+            const link = document.createElement('a');
+            link.download = filename;
+            link.href = dataURL;
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        }
+        
+        // Auto-save functionality simulation
+        function autoSaveToAssets() {
+            if (Object.keys(processedImages).length === 4) {
+                showStatus('🎉 All images ready! Your portfolio is now complete!', 'success');
+                // Here you would implement actual file system saving
+                // For now, we simulate it with downloads
+            }
+        }
+        
+        // Add some interactive effects
+        document.querySelectorAll('.preview-card').forEach(card => {
+            card.addEventListener('mouseenter', function() {
+                this.style.transform = 'translateY(-10px) scale(1.02)';
+            });
+            
+            card.addEventListener('mouseleave', function() {
+                this.style.transform = 'translateY(0) scale(1)';
+            });
+        });
+        
+        // Keyboard shortcuts
+        document.addEventListener('keydown', function(e) {
+            if (e.ctrlKey && e.key === 'u') {
+                e.preventDefault();
+                fileInput.click();
+            }
+        });
+    </script>
+</body>
+</html>

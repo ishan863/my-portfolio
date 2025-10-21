@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Portfolio Stats Direct Checker</title>
+    <style>
+        body { font-family: Arial; margin: 20px; background: #1e293b; color: #f1f5f9; }
+        .section { background: #334155; padding: 20px; margin: 10px 0; border-radius: 8px; }
+        .error { color: #ef4444; font-weight: bold; }
+        .success { color: #22c55e; font-weight: bold; }
+        .value { font-size: 20px; font-weight: bold; color: #3b82f6; margin: 10px 0; }
+        button { padding: 10px 20px; background: #3b82f6; color: white; border: none; border-radius: 4px; cursor: pointer; margin: 5px; }
+        button:hover { background: #2563eb; }
+        .result { margin-top: 10px; padding: 10px; background: #1e293b; border-left: 3px solid #3b82f6; }
+    </style>
+</head>
+<body>
+    <h1>📊 Portfolio Stats Checker (In-Page Test)</h1>
+    <p><strong>Instructions:</strong> Open index.html in another tab/window, then come back here and click buttons.</p>
+    
+    <div class="section">
+        <h2>Option 1: Use IFrame to Check Portfolio</h2>
+        <button onclick="checkViaIframe()">Load Portfolio & Check Stats</button>
+        <div id="iframe-result" class="result" style="display:none;"></div>
+        <iframe id="portfolio-iframe" style="width:100%; height:600px; border:1px solid #3b82f6; margin-top:10px; display:none;"></iframe>
+    </div>
+    
+    <div class="section">
+        <h2>Option 2: Direct Console Test (Copy-Paste)</h2>
+        <p>Open the portfolio page, press F12, go to Console, and paste this code:</p>
+        <pre style="background: #0f172a; padding: 15px; border-radius: 4px; overflow-x: auto;">
+// TEST: Check if elements exist
+const repos = document.querySelector('[data-stat="repos"]');
+const followers = document.querySelector('[data-stat="followers"]');
+const following = document.querySelector('[data-stat="following"]');
+const stars = document.querySelector('[data-stat="stars"]');
+
+console.log('=== CURRENT VALUES ===');
+console.log('Repos:', repos?.textContent || 'NOT FOUND');
+console.log('Followers:', followers?.textContent || 'NOT FOUND');
+console.log('Following:', following?.textContent || 'NOT FOUND');
+console.log('Stars:', stars?.textContent || 'NOT FOUND');
+
+// TEST: Update with real GitHub values (1, 0, 0, 0)
+if(repos) repos.textContent = '1';
+if(followers) followers.textContent = '0';
+if(following) following.textContent = '0';
+if(stars) stars.textContent = '0';
+
+console.log('=== AFTER UPDATE TO GITHUB VALUES ===');
+console.log('Repos:', repos?.textContent || 'NOT FOUND');
+console.log('Followers:', followers?.textContent || 'NOT FOUND');
+console.log('Following:', following?.textContent || 'NOT FOUND');
+console.log('Stars:', stars?.textContent || 'NOT FOUND');
+        </pre>
+        <button onclick="copyToClipboard()">Copy Test Code</button>
+        <div id="copy-result" class="result" style="display:none;"></div>
+    </div>
+    
+    <div class="section">
+        <h2>Option 3: Manual Update Form</h2>
+        <p>If portfolio is already open in another tab:</p>
+        <div>
+            <input type="number" id="repos-val" value="1" style="padding:5px;"> Repos
+            <input type="number" id="followers-val" value="0" style="padding:5px;"> Followers
+            <input type="number" id="following-val" value="0" style="padding:5px;"> Following
+            <input type="number" id="stars-val" value="0" style="padding:5px;"> Stars
+            <button onclick="manualUpdateStats()">Update Stats NOW</button>
+        </div>
+        <div id="manual-result" class="result" style="display:none;"></div>
+    </div>
+
+    <script>
+        function checkViaIframe() {
+            const iframe = document.getElementById('portfolio-iframe');
+            iframe.src = 'index.html';
+            iframe.style.display = 'block';
+            
+            // Wait for iframe to load
+            setTimeout(() => {
+                try {
+                    const doc = iframe.contentDocument || iframe.contentWindow.document;
+                    
+                    const repos = doc.querySelector('[data-stat="repos"]');
+                    const followers = doc.querySelector('[data-stat="followers"]');
+                    const following = doc.querySelector('[data-stat="following"]');
+                    const stars = doc.querySelector('[data-stat="stars"]');
+                    
+                    let html = '<h3>Current Portfolio Stats:</h3>';
+                    html += `<p>Repos element: ${repos ? '<span class="success">✅ FOUND</span>' : '<span class="error">❌ NOT FOUND</span>'}</p>`;
+                    html += `<p class="value">Repos value: ${repos?.textContent || 'N/A'}</p>`;
+                    html += `<p>Followers element: ${followers ? '<span class="success">✅ FOUND</span>' : '<span class="error">❌ NOT FOUND</span>'}</p>`;
+                    html += `<p class="value">Followers value: ${followers?.textContent || 'N/A'}</p>`;
+                    html += `<p>Following element: ${following ? '<span class="success">✅ FOUND</span>' : '<span class="error">❌ NOT FOUND</span>'}</p>`;
+                    html += `<p class="value">Following value: ${following?.textContent || 'N/A'}</p>`;
+                    html += `<p>Stars element: ${stars ? '<span class="success">✅ FOUND</span>' : '<span class="error">❌ NOT FOUND</span>'}</p>`;
+                    html += `<p class="value">Stars value: ${stars?.textContent || 'N/A'}</p>`;
+                    
+                    document.getElementById('iframe-result').innerHTML = html;
+                    document.getElementById('iframe-result').style.display = 'block';
+                } catch (e) {
+                    document.getElementById('iframe-result').innerHTML = `<p class="error">Cannot access iframe (CORS issue). Use Option 2 instead.</p>`;
+                    document.getElementById('iframe-result').style.display = 'block';
+                }
+            }, 2000);
+        }
+        
+        function copyToClipboard() {
+            const code = document.querySelector('pre').textContent;
+            navigator.clipboard.writeText(code).then(() => {
+                const result = document.getElementById('copy-result');
+                result.innerHTML = '<p class="success">✅ Code copied to clipboard!</p>';
+                result.style.display = 'block';
+                setTimeout(() => result.style.display = 'none', 3000);
+            });
+        }
+        
+        function manualUpdateStats() {
+            const repos = document.getElementById('repos-val').value;
+            const followers = document.getElementById('followers-val').value;
+            const following = document.getElementById('following-val').value;
+            const stars = document.getElementById('stars-val').value;
+            
+            // Create script to run in window context
+            const script = `
+                const r = document.querySelector('[data-stat="repos"]');
+                const f = document.querySelector('[data-stat="followers"]');
+                const fg = document.querySelector('[data-stat="following"]');
+                const s = document.querySelector('[data-stat="stars"]');
+                
+                if(r) r.textContent = '${repos}';
+                if(f) f.textContent = '${followers}';
+                if(fg) fg.textContent = '${following}';
+                if(s) s.textContent = '${stars}';
+            `;
+            
+            const result = document.getElementById('manual-result');
+            result.innerHTML = `
+                <p class="success">✅ Update command ready!</p>
+                <p>Open the portfolio page's console (F12) and paste this:</p>
+                <pre style="background: #0f172a; padding: 10px; border-radius: 4px;">
+${script}
+                </pre>
+                <button onclick="copyScript('${script}')">Copy Update Script</button>
+            `;
+            result.style.display = 'block';
+        }
+        
+        function copyScript(script) {
+            navigator.clipboard.writeText(script).then(() => {
+                alert('Script copied! Paste it in the portfolio page console.');
+            });
+        }
+    </script>
+</body>
+</html>

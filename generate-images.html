@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Generate Project Images</title>
+    <style>
+        .image-generator {
+            width: 600px;
+            height: 300px;
+            margin: 20px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-family: 'Arial', sans-serif;
+            font-size: 24px;
+            font-weight: bold;
+            text-align: center;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+        }
+        
+        .chowmin { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); }
+        .employee { background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%); }
+        .pdf { background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%); }
+        .ai-photo { background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%); }
+        .telegram { background: linear-gradient(135deg, #fa709a 0%, #fee140 100%); }
+        .dpr { background: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%); }
+        
+        .avatar {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            margin: 20px;
+        }
+        
+        .about {
+            width: 400px;
+            height: 400px;
+            border-radius: 10px;
+            background: linear-gradient(135deg, #ffecd2 0%, #fcb69f 100%);
+            margin: 20px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Portfolio Image Placeholders</h1>
+    <p>Right-click and "Save Image As" to save these as project images:</p>
+    
+    <div class="avatar"></div>
+    <p>Save as: avatar.jpg (120x120px)</p>
+    
+    <div class="about"></div>
+    <p>Save as: about-photo.jpg (400x400px)</p>
+    
+    <div class="image-generator chowmin">
+        <div>
+            🍜 Chowmin Shop App<br>
+            <small style="font-size: 16px;">Flutter • Firebase • Restaurant Management</small>
+        </div>
+    </div>
+    <p>Save as: project-chowmin.jpg</p>
+    
+    <div class="image-generator employee">
+        <div>
+            👥 Employee Contact Manager<br>
+            <small style="font-size: 16px;">Python • Tkinter • SQLite • CRUD</small>
+        </div>
+    </div>
+    <p>Save as: project-employee.jpg</p>
+    
+    <div class="image-generator pdf">
+        <div>
+            📄 PDF Merger Application<br>
+            <small style="font-size: 16px;">Python • PyQt5 • Document Processing</small>
+        </div>
+    </div>
+    <p>Save as: project-pdf.jpg</p>
+    
+    <div class="image-generator ai-photo">
+        <div>
+            🤖 AI Photo Generator<br>
+            <small style="font-size: 16px;">Python • Juggernaut XL • Stable Diffusion</small>
+        </div>
+    </div>
+    <p>Save as: project-ai-photo.jpg</p>
+    
+    <div class="image-generator telegram">
+        <div>
+            💬 Telegram Bot<br>
+            <small style="font-size: 16px;">Python • Telethon • Automation</small>
+        </div>
+    </div>
+    <p>Save as: project-telegram.jpg</p>
+    
+    <div class="image-generator dpr">
+        <div>
+            📊 DPR Entry System<br>
+            <small style="font-size: 16px;">Python • Data Entry • Reports</small>
+        </div>
+    </div>
+    <p>Save as: project-dpr.jpg</p>
+    
+    <script>
+        // Convert divs to downloadable images
+        function convertToImage(element, filename) {
+            html2canvas(element).then(function(canvas) {
+                var link = document.createElement('a');
+                link.download = filename;
+                link.href = canvas.toDataURL();
+                link.click();
+            });
+        }
+        
+        // Add click handlers (optional - requires html2canvas library)
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('Image placeholders ready. Right-click to save images.');
+        });
+    </script>
+</body>
+</html>
